@@ -1,3 +1,4 @@
+/* eslint-disable react/button-has-type */
 import clsx from "clsx";
 import { useState, useEffect } from "react";
 import Button from "@components/ui/Button";
@@ -27,7 +28,7 @@ function Navbar() {
 
   // Function to handle resume link click
   const getResumeLink = () => {
-    console.log("Resume link clicked");
+    // console.log("Resume link clicked");
   };
 
   // Navbar styles
@@ -88,7 +89,6 @@ function Navbar() {
         {/* Mobile menu button */}
         <button
           onClick={toggleMenu}
-          className=""
           aria-expanded={isOpen ? "true" : "false"}
           aria-controls="mobile-menu"
         >
@@ -97,7 +97,7 @@ function Navbar() {
       </div>
 
       {/* Toggle layer for mobile menu that will appear when the menu is opened*/}
-      <div className={toggleLayerClasses} onClick={toggleMenu}></div>
+      <div className={toggleLayerClasses} onClick={toggleMenu} />
 
       {/* Mobile menu */}
       <div className={mobileMenuClasses}>

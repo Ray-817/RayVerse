@@ -48,7 +48,7 @@ function Hero() {
         <div
           className={circleSmallClasses}
           style={{ top: "-9%", left: "-20%" }}
-        ></div>
+        />
 
         <div
           className={triangleClasses}
@@ -57,7 +57,7 @@ function Hero() {
             top: "50%",
             left: "0%",
           }}
-        ></div>
+        />
 
         <div
           className={circleBigClasses}
@@ -65,12 +65,12 @@ function Hero() {
             top: "70%",
             left: "40%",
           }}
-        ></div>
+        />
       </div>
 
       <div className={textContainerClasses}>
         <span className={boldTextClasses}>Welcome</span>
-        <span className={thinTextClasses}>to RAY's</span>
+        <span className={thinTextClasses}>to RAY&apos;s</span>
         <span className={boldTextClasses}>World</span>
       </div>
     </section>

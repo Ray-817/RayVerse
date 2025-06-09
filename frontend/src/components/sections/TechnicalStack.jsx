@@ -1,9 +1,11 @@
+/* eslint-disable react/self-closing-comp */
 import clsx from "clsx";
 import Icon from "@components/ui/Icon";
 
 function TechnicalStack() {
-  const sectionClasses =
-    "flex flex-col items-center py-26 md:py-30 lg:py-34 mb-26 md:mb-30 lg:mb-34 scroll-offset";
+  const sectionClasses = clsx(
+    "flex flex-col items-center py-26 md:py-30 lg:py-34 mb-26 md:mb-30 lg:mb-34 scroll-offset"
+  );
 
   const containerClasses = clsx(
     "flex flex-col gap-y-30 items-center justify-between gap-x-50",
@@ -33,7 +35,7 @@ function TechnicalStack() {
       <h2>Technical Stack</h2>
       <div className={containerClasses}>
         <div className={cardClasses}>
-          <span className={titleClasses}>What I Know</span>
+          <span className={titleClasses}>What I Use</span>
           <div className={iconContainerClasses}>
             <div title="HTML5">
               <Icon name="html5" className={logoClasses}></Icon>

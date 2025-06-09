@@ -2,6 +2,7 @@ import js from "@eslint/js";
 import globals from "globals";
 import reactHooks from "eslint-plugin-react-hooks";
 import reactRefresh from "eslint-plugin-react-refresh";
+import react from "eslint-plugin-react";
 
 export default [
   { ignores: ["dist"] },
@@ -17,12 +18,14 @@ export default [
       },
     },
     plugins: {
+      react: react,
       "react-hooks": reactHooks,
       "react-refresh": reactRefresh,
     },
     rules: {
       ...js.configs.recommended.rules,
       ...reactHooks.configs.recommended.rules,
+      ...react.configs.recommended.rules,
       "no-unused-vars": ["error", { varsIgnorePattern: "^[A-Z_]" }],
       "react-refresh/only-export-components": [
         "warn",
@@ -52,12 +55,9 @@ export default [
       indent: ["error", 2, { SwitchCase: 1 }], // 强制 2 个空格缩进，switch case 缩进 1 级
       quotes: [
         "error",
-        "single",
+        "double",
         { avoidEscape: true, allowTemplateLiterals: true },
       ],
-      // 强制使用单引号，允许字符串包含引号时使用反引号，允许模板字符串
-      semi: ["error", "never"], // 禁止使用分号
-      "comma-dangle": ["error", "always-multiline"], // 多行时强制使用尾随逗号
       "key-spacing": ["error", { beforeColon: false, afterColon: true }], // 对象属性的键和值之间的空格
       "space-before-function-paren": [
         "error",

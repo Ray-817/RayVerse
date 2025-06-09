@@ -1,3 +1,4 @@
+/* eslint-disable react/button-has-type */
 import clsx from "clsx";
 
 function Button({ label, onClick, variant = "primary", icon = null }) {
