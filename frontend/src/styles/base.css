@@ -1,0 +1,64 @@
+@layer base {
+  html {
+    font-size: 35%;
+    scroll-behavior: smooth;
+  }
+
+  @media (min-width: 768px) {
+    html {
+      font-size: 46.25%;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    html {
+      font-size: 52.5%;
+    }
+  }
+
+  @media (min-width: 1280px) {
+    html {
+      font-size: 58.75%;
+    }
+  }
+
+  @media (min-width: 1536px) {
+    html {
+      font-size: 65%;
+    }
+  }
+
+  body {
+    font-family: var(--font-family-base);
+    line-height: var(--line-height-base);
+    font-weight: var(--font-weight-regular);
+    font-size: var(--font-size-regular);
+    color: var(--color-text);
+    background-color: var(--color-background-light);
+    letter-spacing: normal;
+  }
+
+  h1 {
+    font-size: var(--font-size-hero);
+    font-weight: var(--font-weight-semibold);
+    line-height: var(--line-height-small);
+    text-align: right;
+  }
+
+  h2 {
+    font-size: var(--font-size-section);
+    text-align: center;
+  }
+
+  a {
+    font-size: var(--font-size-regular);
+  }
+
+  a:hover {
+    transform: scale(0.95);
+  }
+
+  button:hover {
+    cursor: pointer;
+  }
+}
