@@ -28,14 +28,14 @@ function TechnicalStack() {
 
   const logoClasses = clsx("w-25 h-25 fill-logo");
 
-  const titleClasses = clsx("text-[5vw] mb-6 md:text-[2.5vw]");
+  const titleClasses = clsx("whitespace-nowrap mb-6", "text-6xl md:text-5xl");
 
   return (
     <section className={sectionClasses} id="stack">
       <h2>Technical Stack</h2>
       <div className={containerClasses}>
         <div className={cardClasses}>
-          <span className={titleClasses}>What I Use</span>
+          <span className={titleClasses}>My Stack</span>
           <div className={iconContainerClasses}>
             <div title="HTML5">
               <Icon name="html5" className={logoClasses}></Icon>
