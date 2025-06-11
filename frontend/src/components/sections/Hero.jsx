@@ -36,10 +36,10 @@ function Hero() {
   );
 
   const boldTextClasses = clsx(
-    "text-[7vh] sm:text-[8vh] md:text-[9vh] lg:text-[15vh] font-semibold leading-tight"
+    "whitespace-nowrap text-[7vh] sm:text-[8vh] md:text-[9vh] lg:text-[15vh] font-semibold leading-tight"
   );
   const thinTextClasses = clsx(
-    "text-[8vh] sm:text-[9vh] md:text-[10vh] lg:text-[16vh] font-thin leading-tight"
+    "whitespace-nowrap text-[8vh] sm:text-[9vh] md:text-[10vh] lg:text-[16vh] font-thin leading-tight"
   );
 
   return (

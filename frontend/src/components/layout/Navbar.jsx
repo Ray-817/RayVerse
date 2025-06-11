@@ -1,7 +1,7 @@
 /* eslint-disable react/button-has-type */
 import clsx from "clsx";
 import { useState, useEffect } from "react";
-import Button from "@components/ui/Button";
+import ButtonMy from "@components/ui/ButtonMy";
 import Icon from "@components/ui/Icon";
 import NavLinks from "@components/ui/NavLinks";
 
@@ -111,7 +111,7 @@ function Navbar() {
         <NavLinks linkClassName={linkDesktopClasses} />
       </div>
 
-      <Button label="resume" onClick={getResumeLink} />
+      <ButtonMy label="resume" onClick={getResumeLink} />
     </nav>
   );
 }
