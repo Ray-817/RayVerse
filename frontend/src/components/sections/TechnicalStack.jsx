@@ -37,10 +37,6 @@ function TechnicalStack() {
         <div className={cardClasses}>
           <span className={titleClasses}>My Stack</span>
           <div className={iconContainerClasses}>
-            <div title="HTML5">
-              <Icon name="html5" className={logoClasses}></Icon>
-            </div>
-
             <div title="React.js">
               <Icon name="react" className={logoClasses}></Icon>
             </div>
@@ -55,6 +51,10 @@ function TechnicalStack() {
 
             <div title="Tailwind CSS">
               <Icon name="tailwind" className={logoClasses}></Icon>
+            </div>
+
+            <div title="Cloudflare">
+              <Icon name="cloudflare" className={logoClasses}></Icon>
             </div>
 
             <Icon name="ellipsis" className={logoClasses}></Icon>

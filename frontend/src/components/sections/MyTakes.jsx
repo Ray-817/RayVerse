@@ -7,7 +7,7 @@ function MyTakes() {
     "scroll-offset"
   );
 
-  const titleContainerClasses = clsx("flex");
+  const titleContainerClasses = clsx("flex items-center gap-x-8 justify-start");
 
   return (
     <section className={sectionClasses} id="takes">

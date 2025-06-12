@@ -9,7 +9,6 @@ import {
   Command,
   CommandEmpty,
   CommandGroup,
-  CommandInput,
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
@@ -19,18 +18,18 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 
-const frameworks = [
+const categorys = [
   {
     value: "all",
     label: "All",
   },
   {
-    value: "tech-insights",
-    label: "Tech Insights",
+    value: "technology",
+    label: "Technology",
   },
   {
-    value: "reflection",
-    label: "Reflections & Reviews",
+    value: "life",
+    label: "Life",
   },
   {
     value: "art",
@@ -53,33 +52,34 @@ function Combobox() {
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="w-[100px] justify-between"
+          className="justify-between min-w-[100px] text-4xl h-auto py-3 rounded-full sm:text-6xl bg-background-light"
         >
           {value
-            ? frameworks.find((framework) => framework.value === value)?.label
+            ? categorys.find((category) => category.value === value)?.label
             : "All"}
-          <ChevronsUpDown className="opacity-50" />
+          <ChevronsUpDown className="ml-2 h-6 w-6 md:h-8 md:w-8 lg:h-10 lg:w-10 xl:h-12 xl:w-12 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[100px] p-0">
+      <PopoverContent className="p-0 min-w-[var(--radix-popover-trigger-width)] max-h-60 overflow-y-auto">
         <Command>
           <CommandList>
-            <CommandEmpty>No framework found.</CommandEmpty>
+            <CommandEmpty>No category found.</CommandEmpty>
             <CommandGroup>
-              {frameworks.map((framework) => (
+              {categorys.map((category) => (
                 <CommandItem
-                  key={framework.value}
-                  value={framework.value}
+                  key={category.value}
+                  value={category.value}
                   onSelect={(currentValue) => {
                     setValue(currentValue === value ? "" : currentValue);
                     setOpen(false);
                   }}
+                  className="text-2xl sm:text-3xl py-4 px-3"
                 >
-                  {framework.label}
+                  {category.label}
                   <Check
                     className={cn(
-                      "ml-auto",
-                      value === framework.value ? "opacity-100" : "opacity-0"
+                      "ml-auto h-6 w-6 md:h-8 md:w-8 lg:h-10 lg:w-10 xl:h-12 xl:w-12",
+                      value === category.value ? "opacity-100" : "opacity-0"
                     )}
                   />
                 </CommandItem>

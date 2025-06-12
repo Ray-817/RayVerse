@@ -33,7 +33,7 @@
     line-height: var(--line-height-base);
     font-weight: var(--font-weight-regular);
     font-size: var(--font-size-regular);
-    color: var(--color-text);
+    color: var(--color-text-my);
     background-color: var(--color-background-light);
     letter-spacing: normal;
   }

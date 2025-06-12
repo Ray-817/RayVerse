@@ -14,15 +14,15 @@ function Hero() {
     "overflow-hidden"
   );
   const circleSmallClasses = clsx(
-    "absolute w-150 h-150 rounded-full bg-primary opacity-100"
+    "absolute w-150 h-150 rounded-full bg-primary-my opacity-100"
   );
 
   const circleBigClasses = clsx(
-    "absolute w-300 h-300 rounded-full bg-primary opacity-100"
+    "absolute w-300 h-300 rounded-full bg-primary-my opacity-100"
   );
 
   const triangleClasses = clsx(
-    "absolute bg-primary opacity-100",
+    "absolute bg-primary-my opacity-100",
     "w-[100%] h-[40%]"
   );
 
