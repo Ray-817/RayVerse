@@ -18,30 +18,34 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 
-const categorys = [
-  {
-    value: "all",
-    label: "All",
-  },
-  {
-    value: "technology",
-    label: "Technology",
-  },
-  {
-    value: "life",
-    label: "Life",
-  },
-  {
-    value: "art",
-    label: "Art & Culture",
-  },
-  {
-    value: "poetry",
-    label: "Poetry",
-  },
-];
+import { useTranslation } from "react-i18next";
 
 function Combobox() {
+  const { t } = useTranslation();
+
+  const categorys = [
+    {
+      value: "all",
+      label: t("all"),
+    },
+    {
+      value: "technology",
+      label: t("technology"),
+    },
+    {
+      value: "life",
+      label: t("life"),
+    },
+    {
+      value: "art",
+      label: t("art"),
+    },
+    {
+      value: "poetry",
+      label: t("poetry"),
+    },
+  ];
+
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState("");
 
@@ -56,7 +60,7 @@ function Combobox() {
         >
           {value
             ? categorys.find((category) => category.value === value)?.label
-            : "All"}
+            : t("all")}
           <ChevronsUpDown className="ml-2 h-6 w-6 md:h-8 md:w-8 lg:h-10 lg:w-10 xl:h-12 xl:w-12 opacity-50" />
         </Button>
       </PopoverTrigger>

@@ -2,8 +2,11 @@
 import avatar from "../../assets/avatar.jpg";
 import clsx from "clsx";
 import AbilityChart from "@components/ui/AbilityChart";
+import { useTranslation } from "react-i18next";
 
 function WhyMe() {
+  const { t } = useTranslation();
+
   // birthday of Ray is 2002 Augest 17th=>(7,17)
   const age =
     new Date().getFullYear() -
@@ -39,7 +42,7 @@ function WhyMe() {
 
   return (
     <section className={sectionClasses} id="why">
-      <h2>Why Me</h2>
+      <h2>{t("why")}</h2>
 
       <div className={containerClasses}>
         <div className={infoClasses}>
@@ -57,11 +60,7 @@ function WhyMe() {
         </div>
 
         <div className={introClasses}>
-          <p>
-            With the background in computer science and strong skills in
-            learning and communicating, I&apos;m eager to collaborate, and
-            solving real-world problems.
-          </p>
+          <p>{t("intro")}</p>
         </div>
 
         <div className={chartClasses}>

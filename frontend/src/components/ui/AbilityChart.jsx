@@ -9,14 +9,7 @@ import {
 
 import { useState, useEffect } from "react";
 
-const data = [
-  { subject: "Learning Ability", score: 4.9, fullMark: 5 },
-  { subject: "Execution", score: 3.8, fullMark: 5 },
-  { subject: "Problem Solving", score: 4.5, fullMark: 5 },
-  { subject: "Communication & Collaboration", score: 4.5, fullMark: 5 },
-  { subject: "Creativity", score: 4.5, fullMark: 5 },
-  { subject: "Production Experience", score: 3, fullMark: 5 },
-];
+import { useTranslation } from "react-i18next";
 
 function CustomizedTick(props) {
   const { x, y, payload, fontSize } = props;
@@ -35,6 +28,16 @@ function CustomizedTick(props) {
 }
 
 function AbilityChart() {
+  const { t } = useTranslation();
+
+  const data = [
+    { subject: t("learning"), score: 4.9, fullMark: 5 },
+    { subject: t("enthusiasm"), score: 4.7, fullMark: 5 },
+    { subject: t("solving"), score: 4.5, fullMark: 5 },
+    { subject: t("commu"), score: 4.5, fullMark: 5 },
+    { subject: t("create"), score: 4.7, fullMark: 5 },
+    { subject: t("experience"), score: 3.5, fullMark: 5 },
+  ];
   // initialize the fontsize
   const [currentFontSize, setCurrentFontSize] = useState(12);
 

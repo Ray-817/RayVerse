@@ -1,20 +1,24 @@
+import { useTranslation } from "react-i18next";
+
 function NavLinks({ linkClassName, onClick }) {
+  const { t } = useTranslation();
+
   return (
     <>
       <a href="#stack" className={linkClassName} onClick={onClick}>
-        Technical Stack
+        {t("tech")}
       </a>
       <a href="#why" className={linkClassName} onClick={onClick}>
-        Why Me
+        {t("why")}
       </a>
       <a href="#takes" className={linkClassName} onClick={onClick}>
-        My Takes
+        {t("takes")}
       </a>
       <a href="#gallery" className={linkClassName} onClick={onClick}>
-        Hobbies Gallery
+        {t("hobby")}
       </a>
       <a href="#contact" className={linkClassName} onClick={onClick}>
-        Contact
+        {t("contact")}
       </a>
     </>
   );

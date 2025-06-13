@@ -1,8 +1,11 @@
 /* eslint-disable react/self-closing-comp */
 import clsx from "clsx";
 import Icon from "@components/ui/Icon";
+import { useTranslation } from "react-i18next";
 
 function TechnicalStack() {
+  const { t } = useTranslation();
+
   const sectionClasses = clsx(
     "flex flex-col items-center py-26 md:py-30 lg:py-34 mb-26 md:mb-30 lg:mb-34 scroll-offset"
   );
@@ -32,10 +35,10 @@ function TechnicalStack() {
 
   return (
     <section className={sectionClasses} id="stack">
-      <h2>Technical Stack</h2>
+      <h2>{t("tech")}</h2>
       <div className={containerClasses}>
         <div className={cardClasses}>
-          <span className={titleClasses}>My Stack</span>
+          <span className={titleClasses}>{t("my_stack")}</span>
           <div className={iconContainerClasses}>
             <div title="React.js">
               <Icon name="react" className={logoClasses}></Icon>
@@ -62,7 +65,7 @@ function TechnicalStack() {
         </div>
 
         <div className={cardClasses}>
-          <span className={titleClasses}>To Learn</span>
+          <span className={titleClasses}>{t("to_learn")}</span>
           <div className={iconContainerClasses}>
             <div title="Vue.js">
               <Icon name="vue" className={logoClasses}></Icon>

@@ -4,10 +4,13 @@ import { useState, useEffect } from "react";
 import ButtonMy from "@components/ui/ButtonMy";
 import Icon from "@components/ui/Icon";
 import NavLinks from "@components/ui/NavLinks";
+import LanguageSelector from "@components/ui/LanguageSelector";
+import { useTranslation } from "react-i18next";
 
 function Navbar() {
   // State to manage the open/close state of the mobile menu
   const [isOpen, setIsOpen] = useState(false);
+  const { t } = useTranslation();
 
   // Control the body overflow when the menu is open
   useEffect(() => {
@@ -82,6 +85,8 @@ function Navbar() {
     }
   );
 
+  const buttonContainerClasses = clsx("flex items-center justify-center gap-6");
+
   return (
     <nav className={navClasses}>
       {/* Mobile navigation links */}
@@ -111,7 +116,10 @@ function Navbar() {
         <NavLinks linkClassName={linkDesktopClasses} />
       </div>
 
-      <ButtonMy label="resume" onClick={getResumeLink} />
+      <div className={buttonContainerClasses}>
+        <ButtonMy label={t("resume")} onClick={getResumeLink} />
+        <LanguageSelector />
+      </div>
     </nav>
   );
 }
