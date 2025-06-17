@@ -3,10 +3,6 @@ const videoController = require("../controller/videoController");
 const router = express.Router();
 
 router.route("/").post(videoController.createVideo);
-router
-  .route("/:id")
-  .get(videoController.getVideo)
-  .patch(videoController.updateVideo)
-  .delete(videoController.deleteVideo);
+router.route("/:id").get(videoController.getVideo);
 
 module.exports = router;

@@ -7,10 +7,7 @@ router
   .route("/")
   .get(articleController.getAllArticles)
   .post(articleController.createArticle);
-router
-  .route("/:id")
-  .get(articleController.getArticle)
-  .patch(articleController.updateArticle)
-  .delete(articleController.deleteArticle);
+
+router.route("/:id").get(articleController.getArticle);
 
 module.exports = router;

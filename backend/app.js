@@ -1,5 +1,6 @@
 const express = require("express");
 const morgan = require("morgan");
+const i18n = require("./i18n");
 const cors = require("cors");
 
 // ROUTES
@@ -14,9 +15,19 @@ const app = express();
 if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
 }
+// **CORS 配置 (非常重要!)**
+// 允许前端开发服务器的源访问你的后端
+// 在开发阶段，允许来自 Vite 开发服务器的请求
+const corsOptions = {
+  origin: "http://localhost:5173", // 替换为你的 Vite 开发服务器地址
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+  credentials: true, // 如果你需要发送 cookies 或授权头
+  optionsSuccessStatus: 204,
+};
+app.use(cors(corsOptions));
 
-app.use(cors());
 app.use(express.json());
+app.use(i18n.init);
 
 // set root URL
 app.get("/", (req, res) => {
@@ -25,9 +36,11 @@ app.get("/", (req, res) => {
     .json({ message: "Hello from the Ray Verse API 0.0", app: "RayVerse" });
 });
 
-app.use("/api/v1/resumes", resumeRouter);
-app.use("/api/v1/articles", articleRouter);
-app.use("/api/v1/images", imageRouter);
-app.use("/api/v1/videos", videoRouter);
+const apiPrefix = process.env.API_PREFIX;
+
+app.use(`${apiPrefix}/resumes`, resumeRouter);
+app.use(`${apiPrefix}/articles`, articleRouter);
+app.use(`${apiPrefix}/images`, imageRouter);
+app.use(`${apiPrefix}/videos`, videoRouter);
 
 module.exports = app;

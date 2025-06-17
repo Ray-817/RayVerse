@@ -1,33 +1,69 @@
 const mongoose = require("mongoose");
+const slugify = require("slugify");
+
+const validator = require("validator");
 
 const articleSchema = new mongoose.Schema(
   {
     slug: {
       type: String,
-      required: [true, "Article should has its slug."],
       unique: true,
-      lowercase: true,
       trim: true,
     },
     title: {
-      type: String,
-      required: [true, "Article should has title."],
-      trim: true,
+      en: {
+        type: String,
+        required: [true, "Article should has title."],
+        trim: true,
+      },
+      jp: {
+        type: String,
+        required: [true, "Article should has title."],
+        trim: true,
+      },
     },
-    summary: { type: String, trim: true },
+    summary: {
+      en: {
+        type: String,
+        required: [true, "Article should has summary."],
+        trim: true,
+      },
+      jp: {
+        type: String,
+        required: [true, "Article should has summary."],
+        trim: true,
+      },
+    },
+    mockContent: {
+      en: {
+        type: String,
+        required: [true, "Article should has content."],
+      },
+      jp: {
+        type: String,
+        required: [true, "Article should has content."],
+      },
+    },
     contentUrl: {
-      type: String,
-      required: [true, "Article should has cloudflare URL."],
+      en: {
+        type: String,
+        // required: [true, "Article should has URL."],
+        trim: true,
+      },
+      jp: {
+        type: String,
+        // required: [true, "Article should has URL."],
+        trim: true,
+      },
     },
     publishedAt: {
       type: Date,
       default: Date.now,
     },
-    language: { type: String, enum: ["zh", "jp", "en"], default: "jp" },
     visible: { type: Boolean, default: true },
     categories: {
       type: [String],
-      required: true,
+      required: [true, "Article should has category."],
       enum: ["technology", "art", "poetry", "life"],
     },
     likes: {
@@ -42,5 +78,16 @@ const articleSchema = new mongoose.Schema(
 // articleSchema.index({ slug: 1 });
 // 在 language 和 categories 字段上创建复合索引以提高过滤性能
 // articleSchema.index({ language: 1, categories: 1 });
+
+// adding slug to the model
+articleSchema.pre("save", function (next) {
+  this.slug = slugify(this.title.en.split(":")[0].trim(), { lower: true });
+
+  // if (!this.slug || this.isModified("title.en")) {
+  //   const baseTitle = this.title.en.split(":")[0].trim();
+  //   this.slug = slugify(baseTitle, { lower: true });
+  // }
+  next();
+});
 
 module.exports = mongoose.model("Article", articleSchema);

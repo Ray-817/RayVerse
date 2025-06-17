@@ -10,6 +10,14 @@ const __dirname = path.dirname(__filename);
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react(), tailwindcss()],
+  server: {
+    proxy: {
+      "/api/v1": {
+        target: `http://localhost:3030`,
+        changeOrigin: true,
+      },
+    },
+  },
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "src"),
@@ -18,6 +26,8 @@ export default defineConfig({
       "@assets": path.resolve(__dirname, "src/assets"),
       "@hooks": path.resolve(__dirname, "src/hooks"),
       "@utils": path.resolve(__dirname, "src/utils"),
+      "@config": path.resolve(__dirname, "src/config"),
+      "@services": path.resolve(__dirname, "src/services"),
     },
   },
 });

@@ -14,11 +14,3 @@ exports.createVideo = catchAsync(async (req, res) => {
 exports.getVideo = () => {
   console.log(`getVideo`);
 };
-
-exports.updateVideo = () => {
-  console.log(`updateVideo`);
-};
-
-exports.deleteVideo = () => {
-  console.log(`deleteVideo`);
-};

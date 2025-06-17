@@ -1,7 +1,14 @@
 const mongoose = require("mongoose");
 
+const validator = require("validator");
+
 const videoSchema = new mongoose.Schema(
   {
+    slug: {
+      type: String,
+      unique: true,
+      trim: true,
+    },
     title: {
       type: String,
       required: true,
@@ -41,5 +48,11 @@ const videoSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+
+// adding slug to the model
+videoSchema.pre("save", function (next) {
+  this.slug = slugify(this.title.replace(" ", "-"), { lower: true });
+  next();
+});
 
 module.exports = mongoose.model("Video", videoSchema);

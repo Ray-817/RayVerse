@@ -7,10 +7,6 @@ router
   .route("/")
   .get(imageController.getAllImages)
   .post(imageController.createImage);
-router
-  .route("/:id")
-  .get(imageController.getImage)
-  .patch(imageController.updateImage)
-  .delete(imageController.deleteImage);
+router.route("/:id").get(imageController.getImage);
 
 module.exports = router;

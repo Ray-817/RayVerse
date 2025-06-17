@@ -16,11 +16,3 @@ exports.createResume = catchAsync(async (req, res) => {
     },
   });
 });
-exports.updateResume = (req, res) => {
-  res.status(200).json({
-    status: "success",
-  });
-};
-exports.deleteResume = (req, res) => {
-  res.status(204).json({ status: "success" });
-};

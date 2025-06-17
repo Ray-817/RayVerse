@@ -18,11 +18,3 @@ exports.createImage = catchAsync(async (req, res) => {
 exports.getImage = () => {
   console.log(`getImage`);
 };
-
-exports.updateImage = () => {
-  console.log(`updateImage`);
-};
-
-exports.deleteImage = () => {
-  console.log(`deleteImage`);
-};
