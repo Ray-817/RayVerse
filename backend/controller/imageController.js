@@ -1,5 +1,5 @@
 const Image = require("../models/imageModel");
-const catchAsync = require("../util/catchAsync");
+const catchAsync = require("../utils/catchAsync");
 
 exports.getAllImages = () => {
   console.log(`getAllImages`);

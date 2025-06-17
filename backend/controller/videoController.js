@@ -1,5 +1,5 @@
 const Video = require("../models/videoModel");
-const catchAsync = require("../util/catchAsync");
+const catchAsync = require("../utils/catchAsync");
 
 exports.createVideo = catchAsync(async (req, res) => {
   const newVideo = await Video.create(req.body);

@@ -1,9 +1,10 @@
 const Article = require("../models/articleModel");
-const catchAsync = require("../util/catchAsync");
-const APIFeatures = require("../util/apiFeatures");
+const catchAsync = require("../utils/catchAsync");
+const APIFeatures = require("../utils/apiFeatures");
+const dotenv = require("dotenv");
+dotenv.config({ path: "../config.env" });
 
 exports.getAllArticles = catchAsync(async (req, res) => {
-  const PAGINATION_PAGE = 4;
   // 1. 用于计算总文章数 (不应用分页和字段选择)
   // 这里我们只需要过滤，因为 countDocuments 只需要知道筛选条件
   const totalArticlesQuery = new APIFeatures(
@@ -24,8 +25,12 @@ exports.getAllArticles = catchAsync(async (req, res) => {
 
   // 根据当前页和每页限制计算总页数
   const page = parseInt(req.query.page) || 1;
-  const limit = parseInt(req.query.limit) || PAGINATION_PAGE;
+  const limit = parseInt(req.query.limit) || process.env.PAGINATION_PAGE;
   const totalPages = Math.ceil(totalArticles / limit);
+
+  if (!articles) {
+    return next(new AppError("Articles Not found!"), 404);
+  }
 
   // 发送成功响应
   res.status(200).json({
@@ -48,6 +53,17 @@ exports.createArticle = catchAsync(async (req, res) => {
   });
 });
 
-exports.getArticle = () => {
-  console.log(`getArticle`);
-};
+exports.getArticle = catchAsync(async (req, res) => {
+  const article = await Article.findById(req.params.id);
+
+  if (!article) {
+    return next(new AppError("No article found with that ID"), 404);
+  }
+
+  res.status(200).json({
+    status: "success",
+    data: {
+      article,
+    },
+  });
+});

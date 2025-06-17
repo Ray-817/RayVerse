@@ -4,7 +4,7 @@ const AppError = require("../utils/appError");
 const sendErrDev = (err, res) => {
   res.status(err.statusCode).json({
     status: err.status,
-    error: err,
+    // error: err,
     message: err.message,
     stack: err.stack,
   });
@@ -45,7 +45,7 @@ const handleWrongValueDB = (error) => {
 };
 
 const handleJWTError = () =>
-  new AppError("Invalid Token, please log in again!", 401);
+  new AppError("Invalid Token! You're not authorized!", 401);
 
 module.exports = (err, req, res, next) => {
   err.statusCode = err.statusCode || 500;

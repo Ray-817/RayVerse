@@ -1,5 +1,5 @@
 const Resume = require("../models/resumeModel");
-const catchAsync = require("../util/catchAsync");
+const catchAsync = require("../utils/catchAsync");
 
 exports.getResume = async (req, res, next) => {
   console.log(`getResume`);

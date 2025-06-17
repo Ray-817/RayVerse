@@ -2,6 +2,8 @@ const express = require("express");
 const morgan = require("morgan");
 const i18n = require("./i18n");
 const cors = require("cors");
+const AppError = require("./utils/appError");
+const globalErrorHandler = require("./controller/errorController");
 
 // ROUTES
 const resumeRouter = require("./routes/resumeRoutes");
@@ -42,5 +44,15 @@ app.use(`${apiPrefix}/resumes`, resumeRouter);
 app.use(`${apiPrefix}/articles`, articleRouter);
 app.use(`${apiPrefix}/images`, imageRouter);
 app.use(`${apiPrefix}/videos`, videoRouter);
+
+app.all(/(.*)/, (req, res, next) => {
+  const err = new AppError(
+    `Cant's find ${req.originalUrl} on this server!`,
+    404
+  );
+  next(err);
+});
+
+app.use(globalErrorHandler);
 
 module.exports = app;
