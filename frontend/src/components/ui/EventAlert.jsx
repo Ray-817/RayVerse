@@ -1,4 +1,4 @@
-import { AlertCircleIcon, CheckCircle2Icon, PopcornIcon } from "lucide-react";
+import { AlertCircleIcon, CheckCircle2Icon } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 function EventAlert({ type = "err", message }) {

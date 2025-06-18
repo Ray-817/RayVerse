@@ -21,7 +21,7 @@ if (process.env.NODE_ENV === "development") {
 // 允许前端开发服务器的源访问你的后端
 // 在开发阶段，允许来自 Vite 开发服务器的请求
 const corsOptions = {
-  origin: "http://localhost:5173", // 替换为你的 Vite 开发服务器地址
+  origin: process.env.FRONTEND_URL, // 替换为你的 Vite 开发服务器地址
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
   credentials: true, // 如果你需要发送 cookies 或授权头
   optionsSuccessStatus: 204,
