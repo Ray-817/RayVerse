@@ -1,8 +1,9 @@
+/* eslint-disable indent */
 import React, { useCallback, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useLocation } from "react-router-dom";
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -84,7 +85,11 @@ function LanguageSelector() {
             onSelect={() => changeLanguage(language.code)}
             className={`
               text-4xl md:text-3xl mx-2 my-3
-              ${language.code === currentSelectedLang ? "font-semibold text-text-my" : ""}
+              ${
+                language.code === currentSelectedLang
+                  ? "font-semibold text-text-my"
+                  : ""
+              }
             `}
           >
             {language.name}
