@@ -1,4 +1,5 @@
 const Article = require("../models/articleModel");
+const AppError = require("../utils/appError");
 const catchAsync = require("../utils/catchAsync");
 const APIFeatures = require("../utils/apiFeatures");
 const dotenv = require("dotenv");
