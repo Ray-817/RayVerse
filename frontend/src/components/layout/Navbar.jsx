@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/button-has-type */
 import clsx from "clsx";
 import { useState, useEffect } from "react";
@@ -6,11 +7,14 @@ import Icon from "@components/ui/Icon";
 import NavLinks from "@components/ui/NavLinks";
 import LanguageSelector from "@components/ui/LanguageSelector";
 import { useTranslation } from "react-i18next";
+import { getResumeDownloadLink } from "@services/resumeService";
+import { useAlert } from "@hooks/useAlert";
 
 function Navbar() {
   // State to manage the open/close state of the mobile menu
   const [isOpen, setIsOpen] = useState(false);
   const { t } = useTranslation();
+  const { showAlert } = useAlert();
 
   // Control the body overflow when the menu is open
   useEffect(() => {
@@ -29,9 +33,49 @@ function Navbar() {
     setIsOpen(!isOpen);
   };
 
-  // Function to handle resume link click
-  const getResumeLink = () => {
-    // console.log("Resume link clicked");
+  const [loading, setLoading] = useState(false);
+  // eslint-disable-next-line no-unused-vars
+  const [error, setError] = useState(null);
+
+  // 函数：获取 URL 中的查询参数 (这个逻辑仍然留在组件或一个更通用的 utils 中)
+  const getQueryParam = (param) => {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get(param);
+  };
+
+  const handleDownload = async () => {
+    setLoading(true);
+    setError(null);
+
+    const currentLanguage = getQueryParam("lang") || "en";
+
+    try {
+      const downloadUrl = await getResumeDownloadLink(currentLanguage);
+      showAlert(
+        "success",
+        "💛Download Successful",
+        "Resume is ready! Please check the new tab for download.",
+        3000
+      );
+
+      const link = document.createElement("a");
+      link.href = downloadUrl;
+      link.setAttribute("download", `RayResume_${currentLanguage}.pdf`); // 设置下载文件名
+      link.setAttribute("target", "_blank"); // <-- 这行确保在新标签页打开
+      link.setAttribute("rel", "noopener noreferrer"); // <-- 安全性最佳实践
+
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (err) {
+      showAlert(
+        "destructive",
+        `⛔Download Failed`,
+        "Please check your network and try again!"
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   // Navbar styles
@@ -117,7 +161,11 @@ function Navbar() {
       </div>
 
       <div className={buttonContainerClasses}>
-        <ButtonMy label={t("resume")} onClick={getResumeLink} />
+        <ButtonMy
+          label={t("resume")}
+          onClick={handleDownload}
+          disabled={loading}
+        />
         <LanguageSelector />
       </div>
     </nav>

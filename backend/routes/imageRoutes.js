@@ -3,10 +3,10 @@ const imageController = require("../controller/imageController");
 
 const router = express.Router();
 
-router
-  .route("/")
-  .get(imageController.getAllImages)
-  .post(imageController.createImage);
-router.route("/:id").get(imageController.getImage);
+router.route("/").post(imageController.createImage);
+
+router.route("/thumbnails").get(imageController.getAllThumbnails);
+
+router.route("/slug/:slug").get(imageController.getSingleImageBySlug);
 
 module.exports = router;

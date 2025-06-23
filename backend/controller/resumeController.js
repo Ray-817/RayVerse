@@ -9,8 +9,6 @@ exports.getResume = catchAsync(async (req, res, next) => {
   // 1. 从数据库获取对应的 R2 对象键
   const resumeData = await Resume.findOne({ language: lang });
 
-  console.log(req.query);
-
   if (!resumeData || !resumeData.resumeUrl) {
     return next(
       new AppError("Resume object key not found for this language."),

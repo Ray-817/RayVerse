@@ -1,3 +1,5 @@
+import { AlertProvider } from "@context/AlertContext";
+
 import "./index.css";
 import Navbar from "@components/layout/Navbar";
 import Hero from "@components/sections/Hero";
@@ -10,7 +12,7 @@ import Footer from "@components/layout/Footer";
 
 function App() {
   return (
-    <>
+    <AlertProvider>
       <Navbar />
       <Hero />
       <TechnicalStack />
@@ -19,7 +21,7 @@ function App() {
       <HobbiesGallery />
       <Contact />
       <Footer />
-    </>
+    </AlertProvider>
   );
 }
 

@@ -4,6 +4,7 @@ const i18n = require("./i18n");
 const cors = require("cors");
 const AppError = require("./utils/appError");
 const globalErrorHandler = require("./controller/errorController");
+const authorizeAdmin = require("./middlewares/authorizeAdmin");
 
 // ROUTES
 const resumeRouter = require("./routes/resumeRoutes");
@@ -39,6 +40,8 @@ app.get("/", (req, res) => {
 });
 
 const apiPrefix = process.env.API_PREFIX;
+
+app.use(`${apiPrefix}`, authorizeAdmin);
 
 app.use(`${apiPrefix}/resumes`, resumeRouter);
 app.use(`${apiPrefix}/articles`, articleRouter);

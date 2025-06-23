@@ -1,3 +1,4 @@
+/* eslint-disable indent */
 import React, { useCallback } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
@@ -144,7 +145,7 @@ function ArticlePagination({ currentPage, totalPages }) {
   return (
     <div className="flex justify-center items-center mt-8">
       <Pagination>
-        <PaginationContent>
+        <PaginationContent className="cursor-pointer">
           {/* 上一页按钮 */}
           <PaginationItem>
             <PaginationPrevious
@@ -152,7 +153,11 @@ function ArticlePagination({ currentPage, totalPages }) {
               aria-disabled={currentPage === 1}
               tabIndex={currentPage === 1 ? -1 : undefined}
               className={`text-xl md:text-3xl p-2 md:p-3 
-                ${currentPage === 1 ? "pointer-events-none opacity-50" : undefined}`}
+                ${
+                  currentPage === 1
+                    ? "pointer-events-none opacity-50"
+                    : undefined
+                }`}
             />
           </PaginationItem>
 
@@ -165,7 +170,11 @@ function ArticlePagination({ currentPage, totalPages }) {
               onClick={() => handlePageChange(currentPage + 1)}
               aria-disabled={currentPage === totalPages}
               tabIndex={currentPage === totalPages ? -1 : undefined}
-              className={`text-xl md:text-3xl p-2 md:p-3 ${currentPage === totalPages ? "pointer-events-none opacity-50" : undefined}`}
+              className={`text-xl md:text-3xl p-2 md:p-3 ${
+                currentPage === totalPages
+                  ? "pointer-events-none opacity-50"
+                  : undefined
+              }`}
             />
           </PaginationItem>
         </PaginationContent>

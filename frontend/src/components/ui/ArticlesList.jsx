@@ -4,7 +4,6 @@ import { getArticles } from "@services/articleService";
 import config from "@config/appConfig";
 import clsx from "clsx";
 
-import EventAlert from "./EventAlert";
 import Icon from "./Icon";
 import PaginationMy from "./PaginationMy";
 
@@ -23,6 +22,7 @@ function ArticleList() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentLang, setCurrentLang] = useState(config.DEFAULT_LANG);
+  const [selectedArticle, setSelectedArticle] = useState(null);
 
   const iconClass = clsx("absolute inset-0 flex items-center justify-center");
 
@@ -98,35 +98,58 @@ function ArticleList() {
     return categoryColors[primaryCategory] || categoryColors.default;
   };
 
-  // if (loading)
-  //   return <Icon name="spin" className="w-25 h-25 animate-spin-slow" />;
+  const parentHeightClass = error
+    ? "w-[80vw] h-[60vw] sm:w-[40vw] sm:h-[10vw]"
+    : "min-h-[80vw] w-[70vw]";
 
-  // if (error) return <EventAlert message={error} />;
+  const parentMargin = error ? "my-20" : "my-40";
+  const containerClasses = clsx(`container mx-auto ${parentMargin}`);
+
+  const articleListClasses = clsx(
+    `relative  ${parentHeightClass} mx-auto flex flex-col items-center justify-center rounded-lg overflow-hidden md:w-[45vw] md:min-h-[45vw]`
+  );
 
   return (
-    <div className="container mx-auto my-40">
-      <div className="relative w-[70vw] min-h-[80vw] mx-auto flex flex-col items-center justify-center rounded-lg overflow-hidden md:w-[45vw] md:min-h-[45vw]">
+    <div className={containerClasses}>
+      <div className={articleListClasses}>
         {loading ? (
           // 加载时显示旋转图标，并使其填充整个预设大小的容器
           <div className={iconClass}>
-            <Icon name="spin" className="animate-spin-slow" />
+            <Icon
+              name="loader"
+              className="w-30 h-30 my-5 mx-auto animate-spin opacity-50"
+            />
           </div>
         ) : error ? (
           // 错误时显示错误信息
-          <div className={iconClass}>
-            <EventAlert message={error} />
+          <div className="flex flex-col w-[100%] rounded-lg text-center">
+            <Icon name="refresh" className="w-30 h-30 my-5 mx-auto " />
+            <div className="flex flex-col items-center mb-20">
+              <p className="text-5xl font-medium px-5 md:text-6xl ">
+                We can&apos;t get any Articles!
+              </p>
+              <p className="text-3xl px-5 mt-5 md:text-4xl">
+                Please check your network and refresh again!
+              </p>
+            </div>
           </div>
         ) : articles.length === 0 ? (
-          // 没有文章时显示提示信息
-          <div className={iconClass}>
-            <EventAlert message="No articles found in this category." />
+          <div className="flex flex-col w-[100%] rounded-lg text-center">
+            <Icon name="alert-tri" className="w-30 h-30 my-5 mx-auto " />
+            <div className="flex flex-col items-center mb-20">
+              <p className="text-5xl font-medium px-5 md:text-6xl ">
+                No articles found in this category.
+              </p>
+            </div>
           </div>
         ) : (
           <div className="absolute inset-0 flex flex-col gap-15  md:grid grid-cols-2 grid-rows-2 md:gap-20 p-6 w-full h-full">
             {articles.map((article) => (
               <div
                 key={article._id}
-                className={`flex flex-col justify-between rounded-lg p-6 ${getArticleCardClass(article.categories)} hover:shadow-md transition-shadow duration-300 cursor-pointer`}
+                className={`flex flex-col justify-between rounded-lg p-6 ${getArticleCardClass(
+                  article.categories
+                )} hover:shadow-md transition-shadow duration-300 cursor-pointer`}
               >
                 <h3 className="line-clamp-1 text-4xl leading-relaxed font-semibold mb-2 text-left md:line-clamp-2 lg:text-5xl">
                   {article.title ? article.title[currentLang] : "No Title"}
