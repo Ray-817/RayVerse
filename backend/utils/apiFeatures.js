@@ -30,42 +30,54 @@ class APIFeatures {
   }
 
   limitFields() {
-    // 总是包含 _id
-    let finalFieldsSet = new Set(["_id"]);
+    // 总是包含 _id 和 slug
+    let finalFieldsSet = new Set(["_id", "slug"]); // **修改点 1: 总是包含 slug**
 
-    // 获取前端请求的 fields 参数，并清理空格
     const requestedFields = this.queryString.fields
       ? this.queryString.fields.split(",").map((f) => f.trim())
       : [];
 
-    // 如果前端没有明确指定要返回的字段，则返回默认的语言特定字段
     if (requestedFields.length === 0) {
-      finalFieldsSet.add(`title.${this.lang}`); // 根据语言选择标题子字段
-      finalFieldsSet.add(`summary.${this.lang}`); // 根据语言选择摘要子字段
-      finalFieldsSet.add("categories"); // categories 仍是普通数组
+      // 如果前端没有明确指定字段，则返回默认的语言特定字段 + categories
+      finalFieldsSet.add(`title.${this.lang}`);
+      finalFieldsSet.add(`summary.${this.lang}`);
+      finalFieldsSet.add("categories");
     } else {
       // 如果前端指定了字段，则遍历这些字段
       requestedFields.forEach((field) => {
-        if (field === "title") {
-          // 如果请求了 'title'，添加特定语言的标题子字段
-          finalFieldsSet.add(`title.${this.lang}`);
-        } else if (field === "summary") {
-          // 如果请求了 'summary'，添加特定语言的摘要子字段
-          finalFieldsSet.add(`summary.${this.lang}`);
-        } else if (field === "categories") {
-          // 如果请求了 'categories'，直接添加 (因为它是普通数组)
-          finalFieldsSet.add("categories");
+        // 处理排除字段（以 '-' 开头）
+        if (field.startsWith("-")) {
+          // 如果是排除字段，我们通常不将其添加到 finalFieldsSet
+          // Mongoose 的 .select() 可以处理排除逻辑
+          // 确保你传入 select 的字符串是正确的格式（正向选择或负向排除）
+          // 注意：混合正负选择通常会导致意外行为，Mongoose 推荐只用一种
+          // 鉴于你的需求，我们倾向于正向选择并确保必含字段
         } else {
-          // 添加其他非特殊处理的字段
-          finalFieldsSet.add(field);
+          // 处理包含字段
+          if (field === "title") {
+            finalFieldsSet.add(`title.${this.lang}`);
+          } else if (field === "summary") {
+            finalFieldsSet.add(`summary.${this.lang}`);
+          } else if (field === "categories") {
+            finalFieldsSet.add("categories");
+          } else {
+            finalFieldsSet.add(field); // 添加其他非特殊处理的字段
+          }
         }
       });
     }
 
-    // 将最终确定的字段集合转换为 Mongoose select 字符串
-    const fieldsToSelect = Array.from(finalFieldsSet).join(" ");
+    // 处理用户请求排除某些字段的情况
+    // 如果你的前端没有发送 '-field' 这样的请求，下面的逻辑可以简化
+    let fieldsToSelectArray = Array.from(finalFieldsSet);
+    let finalSelectString = fieldsToSelectArray.join(" ");
 
-    this.query = this.query.select(fieldsToSelect);
+    // 如果前端同时发送了排除字段（通常不推荐和包含字段混用）
+    // 或者你想要在没有明确指定 fields 时，有一些默认排除的字段（比如 __v）
+    // 你可以在这里添加类似 `this.query.select('-__v')`
+    // 但鉴于你的代码结构，最简单的是确保 `finalFieldsSet` 包含了所有需要的正面选择。
+
+    this.query = this.query.select(finalSelectString);
     return this;
   }
 

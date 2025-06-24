@@ -8,6 +8,6 @@ router
   .get(articleController.getAllArticles)
   .post(articleController.createArticle);
 
-router.route("/:id").get(articleController.getArticle);
+router.route("/slug/:slug").get(articleController.getSingleArticleBySlug);
 
 module.exports = router;

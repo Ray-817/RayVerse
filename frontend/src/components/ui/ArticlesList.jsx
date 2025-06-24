@@ -1,8 +1,13 @@
+/* eslint-disable require-await */
+/* eslint-disable react/button-has-type */
 import React, { useEffect, useState, useCallback } from "react";
 import { useLocation } from "react-router-dom";
-import { getArticles } from "@services/articleService";
+import { getArticles, getSingleArticleBySlug } from "@services/articleService";
+import { useAlert } from "@hooks/useAlert";
 import config from "@config/appConfig";
 import clsx from "clsx";
+import ReactMarkdown from "react-markdown"; // 导入 react-markdown
+import remarkGfm from "remark-gfm"; // 导入 remark-gfm
 
 import Icon from "./Icon";
 import PaginationMy from "./PaginationMy";
@@ -19,10 +24,16 @@ function ArticleList() {
   const [articles, setArticles] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true); // 用于文章列表的初始加载
+  const [error, setError] = useState(null); // 用于文章列表的错误
   const [currentLang, setCurrentLang] = useState(config.DEFAULT_LANG);
-  const [selectedArticle, setSelectedArticle] = useState(null);
+
+  // 模态框相关状态
+  const [selectedArticle, setSelectedArticle] = useState(null); // 存储选中的文章详情（包含Markdown内容）
+  const [loadingArticleContent, setLoadingArticleContent] = useState(false); // 控制模态框内文章内容的加载状态
+  const [articleContentError, setArticleContentError] = useState(null); // 控制模态框内文章内容的错误
+  const [modalArticleSlug, setModalArticleSlug] = useState(null);
+  const { showAlert } = useAlert();
 
   const iconClass = clsx("absolute inset-0 flex items-center justify-center");
 
@@ -40,45 +51,133 @@ function ArticleList() {
   }, [location.search]);
 
   // 异步获取文章数据的函数
-  const fetchArticles = useCallback(async (page, category, lang) => {
-    setLoading(true);
-    setError(null);
+  const fetchArticles = useCallback(
+    async (page, category, lang) => {
+      setLoading(true);
+      setError(null);
+      try {
+        const params = {
+          page: page,
+          limit: config.PAGINATION_PAGE,
+          category: category,
+          lang: lang,
+        };
+
+        const data = await getArticles(params);
+
+        setCurrentPage(data.currentPage);
+        setTotalPages(data.totalPages);
+        setArticles(data.articles);
+        setCurrentLang(lang);
+      } catch (err) {
+        console.error("Error fetching articles:", err);
+        setError(
+          err.message || "Unable to load articles, please try again later."
+        );
+        showAlert(
+          "destructive",
+          `⛔Failed to get Article!`,
+          "Please check your network and try again!"
+        );
+      } finally {
+        setLoading(false);
+      }
+    },
+    [showAlert]
+  );
+
+  const fetchAndSetModalContent = useCallback(async (articleSlug, lang) => {
+    if (!articleSlug || !lang) return;
+
+    // 移除这里的 setLoadingArticleContent(true); 因为调用方会设置
+    setArticleContentError(null); // 仅保留错误状态的重置
+
     try {
-      const params = {
-        page: page,
-        limit: config.PAGINATION_PAGE,
-        category: category,
-        lang: lang,
-      };
-
-      const data = await getArticles(params);
-
-      setCurrentPage(data.currentPage);
-      setTotalPages(data.totalPages);
-      setArticles(data.articles);
-      setCurrentLang(lang);
+      const fullArticleData = await getSingleArticleBySlug(articleSlug, lang);
+      const markdownResponse = await fetch(fullArticleData.markdownUrl);
+      if (!markdownResponse.ok) {
+        throw new Error(
+          `Failed to fetch markdown: ${markdownResponse.statusText}`
+        );
+      }
+      const markdownContent = await markdownResponse.text();
+      setSelectedArticle({ ...fullArticleData, content: markdownContent });
     } catch (err) {
-      console.error("Error fetching articles:", err);
-      setError(
-        err.message || "Unable to load articles, please try again later."
-      );
+      console.error("Error loading article content:", err);
+      setArticleContentError(err.message || "Failed to load article content.");
+      setSelectedArticle(null); // 如果获取失败，关闭模态框
+      setModalArticleSlug(null); // 重置 slug
     } finally {
-      setLoading(false);
+      setLoadingArticleContent(false); // 无论成功失败，都停止加载
     }
   }, []);
 
-  // useEffect 钩子：当 URL 查询参数变化时，触发数据重新获取
   useEffect(() => {
-    // 每次 URL 变化，都从 URL 获取最新的分类、语言和页码
     const {
       category: categoryFromUrl,
       lang: langFromUrl,
       page: pageFromUrl,
     } = getParamsFromUrl();
 
-    // 使用从 URL 获取的参数来调用 fetchArticles
     fetchArticles(pageFromUrl, categoryFromUrl, langFromUrl);
-  }, [location.search, fetchArticles, getParamsFromUrl]);
+  }, [location.search, fetchArticles, getParamsFromUrl]); // 移除了 selectedArticle
+
+  // ** useEffect 钩子 2: 负责控制 body 滚动条 (只依赖 selectedArticle 变化) **
+  useEffect(() => {
+    if (selectedArticle) {
+      document.body.style.overflow = "hidden";
+      // 优化：计算滚动条宽度并添加 padding-right，避免内容跳动
+      const scrollbarWidth =
+        window.innerWidth - document.documentElement.clientWidth;
+      if (scrollbarWidth > 0) {
+        // 仅当有滚动条时才添加 padding
+        document.body.style.paddingRight = `${scrollbarWidth}px`;
+      }
+    } else {
+      document.body.style.overflow = "";
+      document.body.style.paddingRight = ""; // 清除 padding
+    }
+
+    // 清理函数
+    return () => {
+      document.body.style.overflow = "";
+      document.body.style.paddingRight = "";
+    };
+  }, [selectedArticle]); // 只依赖 selectedArticle
+
+  useEffect(() => {
+    if (modalArticleSlug && currentLang) {
+      // **在发起请求前，立即设置为加载状态**
+      setLoadingArticleContent(true);
+      setArticleContentError(null); // 清除可能存在的旧错误信息
+
+      fetchAndSetModalContent(modalArticleSlug, currentLang);
+    } else if (!modalArticleSlug) {
+      // 如果模态框已关闭，确保相关状态都重置
+      setSelectedArticle(null);
+      setArticleContentError(null);
+      setLoadingArticleContent(false);
+    }
+  }, [modalArticleSlug, currentLang, fetchAndSetModalContent]);
+
+  const handleArticleClick = useCallback(
+    async (article) => {
+      setSelectedArticle({ ...article, content: "" });
+      setLoadingArticleContent(true);
+      setArticleContentError(null); // Make sure to reset error state
+
+      setModalArticleSlug(article.slug); // Set the slug here
+      // fetchAndSetModalContent will be triggered by the useEffect below
+    },
+    [] // No need for currentLang or fetchAndSetModalContent here as they are handled by useEffect
+  );
+  // 关闭模态框
+  const closeModal = useCallback(() => {
+    setModalArticleSlug(null); // Indicate no article is selected for the modal
+    setSelectedArticle(null); // Clear displayed article data
+    setArticleContentError(null);
+    setLoadingArticleContent(false); // Reset loading state
+  }, []);
 
   // 移除 handleCategoryChange 函数，因为它不再属于 ArticleList
   // const handleCategoryChange = useCallback((newCategory) => { ... }, [...]);
@@ -102,12 +201,15 @@ function ArticleList() {
     ? "w-[80vw] h-[60vw] sm:w-[40vw] sm:h-[10vw]"
     : "min-h-[80vw] w-[70vw]";
 
+  const articleListClasses = clsx(
+    `relative ${parentHeightClass} mx-auto flex flex-col items-center justify-center rounded-lg overflow-hidden md:w-[45vw] md:min-h-[45vw]`
+  );
+
   const parentMargin = error ? "my-20" : "my-40";
   const containerClasses = clsx(`container mx-auto ${parentMargin}`);
 
-  const articleListClasses = clsx(
-    `relative  ${parentHeightClass} mx-auto flex flex-col items-center justify-center rounded-lg overflow-hidden md:w-[45vw] md:min-h-[45vw]`
-  );
+  // 为错误信息容器定义独立的宽度
+  const errorMessageContainerWidthClass = "w-[80vw] sm:w-[40vw]";
 
   return (
     <div className={containerClasses}>
@@ -122,7 +224,9 @@ function ArticleList() {
           </div>
         ) : error ? (
           // 错误时显示错误信息
-          <div className="flex flex-col w-[100%] rounded-lg text-center">
+          <div
+            className={`flex flex-col w-[100%] rounded-lg text-center ${errorMessageContainerWidthClass}`}
+          >
             <Icon name="refresh" className="w-30 h-30 my-5 mx-auto " />
             <div className="flex flex-col items-center mb-20">
               <p className="text-5xl font-medium px-5 md:text-6xl ">
@@ -150,8 +254,10 @@ function ArticleList() {
                 className={`flex flex-col justify-between rounded-lg p-6 ${getArticleCardClass(
                   article.categories
                 )} hover:shadow-md transition-shadow duration-300 cursor-pointer`}
+                onClick={() => handleArticleClick(article)}
+                title={article.title[currentLang]}
               >
-                <h3 className="line-clamp-1 text-4xl leading-relaxed font-semibold mb-2 text-left md:line-clamp-2 lg:text-5xl">
+                <h3 className="line-clamp-1 text-3xl leading-relaxed font-semibold mb-2 text-left md:line-clamp-2 lg:text-5xl">
                   {article.title ? article.title[currentLang] : "No Title"}
                 </h3>
                 <p className="line-clamp-1 mt-auto leading-relaxed text-xl text-gray-600 text-right md:line-clamp-2 ">
@@ -163,6 +269,62 @@ function ArticleList() {
         )}
       </div>
       <PaginationMy currentPage={currentPage} totalPages={totalPages} />
+
+      {selectedArticle && (
+        <div
+          className="fixed bg-gray-200/50 inset-0 flex items-center justify-center z-50 p-4"
+          onClick={closeModal}
+        >
+          <button
+            onClick={closeModal}
+            className="absolute top-[10%] right-[8%] p-2 rounded-full bg-white hover:bg-gray-100 transition-colors duration-200 z-50 sm:top-[13%] sm:right-[15%]"
+            aria-label="Close"
+          >
+            <Icon name="close" className="w-20 h-20" />{" "}
+            {/* 调整颜色以适应白色背景 */}
+          </button>
+          <div
+            className="relative rounded-lg max-w-4xl max-h-[75vh] w-[70vw] overflow-y-auto transform scale-95 animate-fade-in-scale sm:max-h-[85vh] sm:mt-20 "
+            onClick={(e) => e.stopPropagation()}
+          >
+            {loadingArticleContent ? (
+              <div className="w-auto h-[30vh] flex items-center justify-center text-xl sm:h-[70vh]">
+                <Icon name="loader" className="w-20 h-20 animate-spin" />
+              </div>
+            ) : articleContentError ? (
+              <div className="w-[80vw] h-[30vh] flex flex-col items-center justify-center text-4xl p-4 sm:w-[50vw] sm:h-[70vh] bg-gray-200">
+                <Icon name="alert-tri" className="w-16 h-16 mb-4" />
+                <span>{articleContentError}</span>
+              </div>
+            ) : (
+              <div className="relative bg-white prose prose-lg max-w-none">
+                {/* 使用 Tailwind Typography plugin */}
+                <div className="flex flex-col gap-3 border-b border-gray-200 ">
+                  <h2 className="text-5xl font-bold mb-4 p-3 pt-15">
+                    {selectedArticle.title}
+                  </h2>
+                  <p className="mb-6 py-3 px-8">{selectedArticle.summary}</p>
+                  <p className="text-2xl text-right text-gray-400 pb-2 pr-4">
+                    {new Date(selectedArticle.publishedAt).toLocaleDateString(
+                      currentLang,
+                      {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                      }
+                    )}
+                  </p>
+                </div>
+                <div className="mx-8 my-5 flex flex-col">
+                  <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                    {selectedArticle.content}
+                  </ReactMarkdown>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

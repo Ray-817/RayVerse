@@ -47,12 +47,12 @@ const articleSchema = new mongoose.Schema(
     contentUrl: {
       en: {
         type: String,
-        // required: [true, "Article should has URL."],
+        required: [true, "Article should has URL."],
         trim: true,
       },
       jp: {
         type: String,
-        // required: [true, "Article should has URL."],
+        required: [true, "Article should has URL."],
         trim: true,
       },
     },

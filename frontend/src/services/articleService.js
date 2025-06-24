@@ -2,6 +2,7 @@
 import { fetchData } from "./api"; // 导入你封装好的 fetchData 函数
 import config from "../config/appConfig";
 
+const ARTICLE_BASE_ENDPOINT = "/articles";
 /**
  * 从后端获取文章列表。
  *
@@ -47,17 +48,22 @@ export async function getArticles(params = {}) {
   }
 
   const queryString = queryParams.toString();
-  const endpoint = `/articles${queryString ? `?${queryString}` : ""}`;
-
   // 使用 api.js 中封装的 fetchData 函数
-  const data = await fetchData(endpoint);
+  const data = await fetchData(
+    `${ARTICLE_BASE_ENDPOINT}${queryString ? `?${queryString}` : ""}`
+  );
   return data;
 }
 
-// 如果未来有获取单篇文章的 API，可以这样写：
-// export async function getArticleById(id) {
-//   if (!id) {
-//     throw new Error('Article ID is required to fetch a single article.');
-//   }
-//   return fetchData(`/articles/${id}`);
-// }
+export const getSingleArticleBySlug = async (slug, lang) => {
+  try {
+    // 注意：我们将 lang 作为查询参数传递
+    const data = await fetchData(
+      `${ARTICLE_BASE_ENDPOINT}/slug/${slug}?lang=${lang}`
+    );
+    return data;
+  } catch (error) {
+    console.error(`Error fetching article with slug ${slug}:`, error);
+    throw error;
+  }
+};

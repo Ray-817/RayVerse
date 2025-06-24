@@ -33,6 +33,28 @@ function ImageList() {
     fetchAllThumbnails();
   }, []);
 
+  useEffect(() => {
+    if (selectedImage) {
+      document.body.style.overflow = "hidden";
+      // 优化：计算滚动条宽度并添加 padding-right，避免内容跳动
+      const scrollbarWidth =
+        window.innerWidth - document.documentElement.clientWidth;
+      if (scrollbarWidth > 0) {
+        // 仅当有滚动条时才添加 padding
+        document.body.style.paddingRight = `${scrollbarWidth}px`;
+      }
+    } else {
+      document.body.style.overflow = "";
+      document.body.style.paddingRight = ""; // 清除 padding
+    }
+
+    // 清理函数
+    return () => {
+      document.body.style.overflow = "";
+      document.body.style.paddingRight = "";
+    };
+  }, [selectedImage]); // 只依赖 selectedArticle
+
   const handleImageClick = async (image) => {
     setSelectedImage(image);
     setLoadingLargeImage(true);
@@ -72,10 +94,6 @@ function ImageList() {
     setSelectedImage(null); // 清空选中图片，隐藏模态框
     setError(null); // 关闭模态框时也清除错误信息
   };
-
-  const containerWidthClass = error
-    ? "w-[80vw] sm:w-[40vw]" // 如果只需要控制宽度
-    : "w-[70vw]"; // 让高度由内容决定
 
   // 关键改动：
   // 1. 移除 grid-rows-X，让行高由内容决定 (implicit rows)
@@ -184,7 +202,7 @@ function ImageList() {
             {/* 关闭按钮 */}
             <button
               onClick={closeModal}
-              className="absolute top-[10%] right-2 p-2 rounded-full hover:bg-white hover:bg-opacity-20 transition-colors duration-200"
+              className="absolute top-[9%] right-2 sm:top-[13%] sm:right-2 p-2 rounded-full hover:bg-white hover:bg-opacity-20 transition-colors duration-200"
               aria-label="Close"
             >
               <Icon name="close" className="w-20 h-20" />{" "}
@@ -192,52 +210,6 @@ function ImageList() {
             </button>
           </div>
         </div>
-
-        // <div
-        //   className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 p-4" // 调整这里：深色背景，半透明
-        //   onClick={closeModal} // 点击背景关闭模态框
-        // >
-        //   <div
-        //     className="relative bg-gray-200 rounded-lg shadow-2xl max-w-5xl max-h-[90vh] overflow-hidden transform scale-95 opacity-0 animate-fade-in-scale" // 调整这里：模态框内容区使用深色，且完全不透明 (移除 opacity-0)
-        //     onClick={(e) => e.stopPropagation()} // 阻止点击模态框内容时关闭
-        //   >
-        //     {loadingLargeImage ? (
-        //       <div className="flex items-center justify-center w-[90vw] h-[70vh] text-white text-xl bg-gray-200">
-        //         {" "}
-        //         {/* 调整这里：移除 opacity-30，使用深色背景 */}
-        //         <Icon
-        //           name="loader"
-        //           className="w-20 h-20 animate-spin" // 移除 opacity-50，让图标自身亮度正常
-        //         />
-        //       </div>
-        //     ) : error ? (
-        //       // 大图加载失败显示错误信息
-        //       <div className="flex flex-col items-center justify-center w-[90vw] h-[70vh] text-xl bg-gray-200 p-4">
-        //         {" "}
-        //         {/* 调整这里：移除 opacity-30，使用深色背景，文字颜色 */}
-        //         <Icon name="alert-tri" className="w-16 h-16 mb-4" />
-        //         <span>{error} Please try again.</span>
-        //       </div>
-        //     ) : (
-        //       // 大图加载成功后显示
-        //       <img
-        //         src={selectedImage.imageUrl} // 显示高清图片
-        //         alt={selectedImage.description || selectedImage.title}
-        //         className="max-w-full max-h-[80vh] object-contain mx-auto block"
-        //       />
-        //     )}
-
-        //     {/* 关闭按钮 */}
-        //     <button
-        //       onClick={closeModal}
-        //       // 调整这里：按钮本身使用白色文本，悬停时背景变灰，而不是文本变灰
-        //       className="absolute top-2 right-2 text-white text-4xl font-bold bg-transparent border-none cursor-pointer p-2 rounded-full hover:bg-white hover:bg-opacity-20 transition-colors duration-200"
-        //       aria-label="Close"
-        //     >
-        //       &times;
-        //     </button>
-        //   </div>
-        // </div>
       )}
     </div>
   );
