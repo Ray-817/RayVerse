@@ -50,12 +50,9 @@ function Navbar() {
 
     try {
       const downloadUrl = await getResumeDownloadLink(currentLanguage);
-      showAlert(
-        "success",
-        "💛Download Successful",
-        "Resume is ready! Please check the new tab for download.",
-        3000
-      );
+      const successTitle = t("successDownloadResumetitle");
+      const successMessage = t("successDownloadResumetitle");
+      showAlert("success", successTitle, successMessage, 3000);
 
       const link = document.createElement("a");
       link.href = downloadUrl;
@@ -67,11 +64,9 @@ function Navbar() {
       link.click();
       document.body.removeChild(link);
     } catch (err) {
-      showAlert(
-        "destructive",
-        `⛔Download Failed`,
-        "Please check your network and try again!"
-      );
+      const failTitle = t("failDownloadResumetitle");
+      const failMessage = t("checkNetworkMessage");
+      showAlert("destructive", failTitle, failMessage, 3000);
     } finally {
       setLoading(false);
     }

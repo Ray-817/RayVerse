@@ -26,6 +26,17 @@
     "mail": "Email",
     "submit": "Submit",
     "thank1": "Thank you for visiting💛",
-    "thank2": "Click to get my Resume"
+    "thank2": "Click to get my Resume",
+
+    "successDownloadResumetitle": "💛Download Successful",
+    "successDownloadMessage": "Resume is ready! Please check the new tab for download.",
+    "checkNetworkMessage": "Please check your network and try again!",
+    "failDownloadResumetitle": "⛔Download Failed",
+    "failFetchArticles": "⛔Failed to get Articles",
+    "failFetchContent": "⛔Unable to Load Article Content",
+    "noArticles": "No articles found in this category.",
+    "failFetchImages": "⛔Failed to get Images",
+    "failLoadImage": "⛔Failed to load full image",
+    "failFetchVideos": "⛔Failed to get Videos"
   }
 }

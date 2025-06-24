@@ -26,6 +26,17 @@
     "mail": "メールアドレス",
     "submit": "送信",
     "thank1": "ご訪問いただきありがとうございます💛",
-    "thank2": "履歴書はこちらからご覧いただけます"
+    "thank2": "履歴書はこちらからご覧いただけます",
+
+    "successDownloadResumetitle": "💛ダウンロード成功",
+    "successDownloadMessage": "履歴書の準備ができました！新しいタブでダウンロードを確認してください。",
+    "checkNetworkMessage": "ネットワークを確認して、もう一度お試しください。",
+    "failDownloadResumetitle": "⛔ダウンロード失敗",
+    "failFetchArticles": "⛔記事の取得に失敗しました",
+    "failFetchContent": "⛔記事内容を読み込めませんでした",
+    "noArticles": "このカテゴリには記事がありません。",
+    "failFetchImages": "⛔画像の取得に失敗しました",
+    "failLoadImage": "⛔画像の完全な読み込みに失敗しました",
+    "failFetchVideos": "⛔動画の取得に失敗しました"
   }
 }

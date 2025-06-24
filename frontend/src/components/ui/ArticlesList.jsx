@@ -8,6 +8,7 @@ import config from "@config/appConfig";
 import clsx from "clsx";
 import ReactMarkdown from "react-markdown"; // 导入 react-markdown
 import remarkGfm from "remark-gfm"; // 导入 remark-gfm
+import { useTranslation } from "react-i18next";
 
 import Icon from "./Icon";
 import PaginationMy from "./PaginationMy";
@@ -27,11 +28,12 @@ function ArticleList() {
   const [loading, setLoading] = useState(true); // 用于文章列表的初始加载
   const [error, setError] = useState(null); // 用于文章列表的错误
   const [currentLang, setCurrentLang] = useState(config.DEFAULT_LANG);
+  const { t } = useTranslation();
 
   // 模态框相关状态
   const [selectedArticle, setSelectedArticle] = useState(null); // 存储选中的文章详情（包含Markdown内容）
   const [loadingArticleContent, setLoadingArticleContent] = useState(false); // 控制模态框内文章内容的加载状态
-  const [articleContentError, setArticleContentError] = useState(null); // 控制模态框内文章内容的错误
+  const [, setArticleContentError] = useState(null); // 控制模态框内文章内容的错误
   const [modalArticleSlug, setModalArticleSlug] = useState(null);
   const { showAlert } = useAlert();
 
@@ -74,16 +76,14 @@ function ArticleList() {
         setError(
           err.message || "Unable to load articles, please try again later."
         );
-        showAlert(
-          "destructive",
-          `⛔Failed to get Article!`,
-          "Please check your network and try again!"
-        );
+        const title = t("failFetchArticles");
+        const message = t("checkNetworkMessage");
+        showAlert("destructive", title, message);
       } finally {
         setLoading(false);
       }
     },
-    [showAlert]
+    [showAlert, t]
   );
 
   const fetchAndSetModalContent = useCallback(async (articleSlug, lang) => {
@@ -103,8 +103,11 @@ function ArticleList() {
       const markdownContent = await markdownResponse.text();
       setSelectedArticle({ ...fullArticleData, content: markdownContent });
     } catch (err) {
+      const title = t("failFetchContent");
+      const message = t("checkNetworkMessage");
       console.error("Error loading article content:", err);
-      setArticleContentError(err.message || "Failed to load article content.");
+      setArticleContentError(message);
+      showAlert("destructive", title, message);
       setSelectedArticle(null); // 如果获取失败，关闭模态框
       setModalArticleSlug(null); // 重置 slug
     } finally {
@@ -179,9 +182,6 @@ function ArticleList() {
     setLoadingArticleContent(false); // Reset loading state
   }, []);
 
-  // 移除 handleCategoryChange 函数，因为它不再属于 ArticleList
-  // const handleCategoryChange = useCallback((newCategory) => { ... }, [...]);
-
   // 辅助函数：根据文章的分类获取对应的 Tailwind CSS 类名
   const getArticleCardClass = (articleCategories) => {
     if (
@@ -230,10 +230,10 @@ function ArticleList() {
             <Icon name="refresh" className="w-30 h-30 my-5 mx-auto " />
             <div className="flex flex-col items-center mb-20">
               <p className="text-5xl font-medium px-5 md:text-6xl ">
-                We can&apos;t get any Articles!
+                {t("failFetchArticles")}
               </p>
               <p className="text-3xl px-5 mt-5 md:text-4xl">
-                Please check your network and refresh again!
+                {t("checkNetworkMessage")}
               </p>
             </div>
           </div>
@@ -242,7 +242,7 @@ function ArticleList() {
             <Icon name="alert-tri" className="w-30 h-30 my-5 mx-auto " />
             <div className="flex flex-col items-center mb-20">
               <p className="text-5xl font-medium px-5 md:text-6xl ">
-                No articles found in this category.
+                {t("noArticles")}
               </p>
             </div>
           </div>
@@ -257,10 +257,10 @@ function ArticleList() {
                 onClick={() => handleArticleClick(article)}
                 title={article.title[currentLang]}
               >
-                <h3 className="line-clamp-1 text-3xl leading-relaxed font-semibold mb-2 text-left md:line-clamp-2 lg:text-5xl">
-                  {article.title ? article.title[currentLang] : "No Title"}
+                <h3 className="line-clamp-1 text-4xl leading-relaxed font-semibold mb-2 text-left md:line-clamp-2">
+                  {article.title ? article.title[currentLang] : ""}
                 </h3>
-                <p className="line-clamp-1 mt-auto leading-relaxed text-xl text-gray-600 text-right md:line-clamp-2 ">
+                <p className="line-clamp-1 mt-auto leading-relaxed text-xl text-right md:line-clamp-2 ">
                   {article.summary ? article.summary[currentLang] : ""}
                 </p>
               </div>
@@ -281,7 +281,6 @@ function ArticleList() {
             aria-label="Close"
           >
             <Icon name="close" className="w-20 h-20" />{" "}
-            {/* 调整颜色以适应白色背景 */}
           </button>
           <div
             className="relative rounded-lg max-w-4xl max-h-[75vh] w-[70vw] overflow-y-auto transform scale-95 animate-fade-in-scale sm:max-h-[85vh] sm:mt-20 "
@@ -291,14 +290,8 @@ function ArticleList() {
               <div className="w-auto h-[30vh] flex items-center justify-center text-xl sm:h-[70vh]">
                 <Icon name="loader" className="w-20 h-20 animate-spin" />
               </div>
-            ) : articleContentError ? (
-              <div className="w-[80vw] h-[30vh] flex flex-col items-center justify-center text-4xl p-4 sm:w-[50vw] sm:h-[70vh] bg-gray-200">
-                <Icon name="alert-tri" className="w-16 h-16 mb-4" />
-                <span>{articleContentError}</span>
-              </div>
             ) : (
               <div className="relative bg-white prose prose-lg max-w-none">
-                {/* 使用 Tailwind Typography plugin */}
                 <div className="flex flex-col gap-3 border-b border-gray-200 ">
                   <h2 className="text-5xl font-bold mb-4 p-3 pt-15">
                     {selectedArticle.title}
