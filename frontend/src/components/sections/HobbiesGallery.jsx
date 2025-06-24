@@ -1,5 +1,6 @@
 import { useTranslation } from "react-i18next";
 import ImageList from "@components/ui/ImageList";
+import { VideoCarousel } from "@components/ui/VideoCarousel";
 
 function HobbiesGallery() {
   const { t } = useTranslation();
@@ -10,6 +11,7 @@ function HobbiesGallery() {
     <section className={sectionClasses} id="gallery">
       <h2>{t("hobby")}</h2>
       <ImageList />
+      <VideoCarousel />
     </section>
   );
 }

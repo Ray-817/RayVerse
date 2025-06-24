@@ -70,6 +70,7 @@ const articleSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    likedByIPs: { type: [String] },
   },
   { timestamps: true }
 );

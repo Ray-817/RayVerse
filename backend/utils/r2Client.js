@@ -27,6 +27,7 @@ exports.getR2PresignedUrl = async function getR2PresignedUrl(
   const command = new GetObjectCommand({
     Bucket: R2_BUCKET_NAME,
     Key: objectKey,
+    ResponseCacheControl: `max-age=${expiresIn}, public`,
   });
   const presignedUrl = await getSignedUrl(r2Client, command, { expiresIn });
   return presignedUrl;

@@ -34,7 +34,6 @@ function Navbar() {
   };
 
   const [loading, setLoading] = useState(false);
-  // eslint-disable-next-line no-unused-vars
   const [error, setError] = useState(null);
 
   // 函数：获取 URL 中的查询参数 (这个逻辑仍然留在组件或一个更通用的 utils 中)
