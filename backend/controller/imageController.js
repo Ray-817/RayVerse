@@ -2,34 +2,52 @@ const Image = require("../models/imageModel");
 const catchAsync = require("../utils/catchAsync");
 const AppError = require("../utils/appError");
 const { getR2PresignedUrl } = require("../utils/r2Client");
+const { r2UrlAccessLimiter } = require("../middlewares/rateLimiter");
 
-exports.getAllThumbnails = catchAsync(async (req, res, next) => {
-  const images = await Image.find({ category: "photograph" }); // 获取所有图片元数据
+const R2_URL_EXPIRATION_SECONDS = 3600 * 24; // 24小时
 
-  if (!images) {
-    return next(new AppError("Thumbnail image not found."), 404);
-  }
+exports.getAllThumbnails = [
+  r2UrlAccessLimiter, // 应用频率限制中间件
+  catchAsync(async (req, res, next) => {
+    // 假设你只获取 category 为 'photograph' 的图片作为缩略图展示
+    const images = await Image.find({ category: "photograph" });
 
-  // 映射数据，添加缩略图和大图的完整 URL
-  const formattedImages = await Promise.all(
-    images.map(async (image) => {
-      // 确保 thumbnailUrl 和 imageUrl 字段在 image 对象上存在
-      // 这里的 image.thumbnailUrl 和 image.imageUrl 应该是 R2 的 key (文件名)
-      // 而不是完整的 URL，因为 getR2PresignedUrl 需要的是 key
-      const thumbnailUrl = await getR2PresignedUrl(image.thumbnailUrl); // 注意：这里应该是 R2 key
+    // 如果没有找到任何图片，返回 404
+    if (!images || images.length === 0) {
+      // 更准确的错误信息
+      return next(new AppError("No thumbnail images found.", 404));
+    }
 
-      return {
-        id: image._id,
-        slug: image.slug,
-        description: image.description,
-        thumbnailUrl: thumbnailUrl,
-      };
-    })
-  );
+    // 使用 Promise.all 并行生成所有缩略图的预签名 URL
+    const formattedImages = await Promise.all(
+      images.map(async (image) => {
+        // 确保 image.thumbnailUrl 是 R2 对象的 key (文件名)
+        if (!image.thumbnailUrl) {
+          console.warn(`Image ID ${image._id} missing thumbnailUrl key.`);
+          return null; // 或者跳过，或者返回一个默认图片URL
+        }
 
-  // 注意：这里应该是 200 OK，因为你是成功获取了数据
-  res.status(200).json(formattedImages);
-});
+        const thumbnailUrl = await getR2PresignedUrl(
+          image.thumbnailUrl,
+          R2_URL_EXPIRATION_SECONDS // 使用统一的有效期
+        );
+
+        return {
+          id: image._id,
+          slug: image.slug,
+          description: image.description,
+          thumbnailUrl: thumbnailUrl, // 现在是完整的预签名 URL
+        };
+      })
+    );
+
+    // 过滤掉因为缺少 thumbnailUrl 而返回 null 的项（如果选择了这种处理方式）
+    const validFormattedImages = formattedImages.filter((img) => img !== null);
+
+    // 成功获取数据，状态码 200 OK
+    res.status(200).json(validFormattedImages);
+  }),
+];
 
 exports.createImage = catchAsync(async (req, res) => {
   const newImage = await Image.create(req.body);
@@ -41,32 +59,32 @@ exports.createImage = catchAsync(async (req, res) => {
   });
 });
 
-exports.getSingleImageBySlug = catchAsync(async (req, res) => {
-  const { slug } = req.params;
+exports.getSingleImageBySlug = [
+  r2UrlAccessLimiter,
+  catchAsync(async (req, res, next) => {
+    // 确保 next 参数传入
+    const { slug } = req.params;
 
-  // 2. 使用 slug 从 MongoDB 数据库中查询对应的图片文档
-  const image = await Image.findOne({ slug: slug });
+    const image = await Image.findOne({ slug: slug });
 
-  // 3. 处理图片未找到的情况
-  if (!image) {
-    // 使用 AppError 抛出 404 错误
-    return next(new AppError(`Image with slug "${slug}" not found.`, 404));
-  }
+    if (!image) {
+      return next(new AppError(`Image with slug "${slug}" not found.`, 404));
+    }
 
-  // 4. 构造高清图片和缩略图的预签名 URL
-  // 假设你的 Image Model 中存储 R2 key 的字段是 r2Key 和 thumbnailR2Key
-  const imageUrl = await getR2PresignedUrl(image.imageUrl); // 高清图 URL
+    // 假设 image.imageUrl 存储高清图的 R2 key
+    const imageUrl = await getR2PresignedUrl(
+      image.imageUrl,
+      R2_URL_EXPIRATION_SECONDS // 使用统一的有效期
+    );
 
-  // 5. 准备响应数据
-  const formattedImage = {
-    id: image._id,
-    title: image.title,
-    slug: image.slug,
-    description: image.description,
-    imageUrl: imageUrl, // 返回高清图片 URL
-  };
+    const formattedImage = {
+      id: image._id,
+      title: image.title,
+      slug: image.slug,
+      description: image.description,
+      imageUrl: imageUrl,
+    };
 
-  // 6. 将数据作为 JSON 响应返回给前端
-  // 成功获取单个资源，状态码为 200 OK
-  res.status(200).json(formattedImage);
-});
+    res.status(200).json(formattedImage);
+  }),
+];

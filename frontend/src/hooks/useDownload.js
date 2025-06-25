@@ -20,7 +20,7 @@ export const useDownloadResume = () => {
     try {
       const downloadUrl = await getResumeDownloadLink(currentLanguage);
       const successTitle = t("successDownloadResumetitle");
-      const successMessage = t("tSuccessMessageForDownload"); // 建议这里使用不同的翻译键，或者更通用的消息
+      const successMessage = t("successDownloadMessage"); // 建议这里使用不同的翻译键，或者更通用的消息
       showAlert("success", successTitle, successMessage, 3000);
 
       const link = document.createElement("a");

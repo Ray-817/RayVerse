@@ -56,14 +56,62 @@ export async function getArticles(params = {}) {
 }
 
 export const getSingleArticleBySlug = async (slug, lang) => {
+  const cacheKey = `article_content_${slug}_${lang}`;
+  const cachedData = localStorage.getItem(cacheKey);
+
+  // --- 1. 检查 LocalStorage 缓存 ---
+  if (cachedData) {
+    try {
+      const { article: cachedArticle, expiresAt } = JSON.parse(cachedData);
+      // 检查缓存是否过期 (后端 R2 URL 通常有 24 小时有效期，所以前端缓存也设为 24 小时)
+      const isCacheValid = Date.now() < expiresAt;
+
+      if (isCacheValid) {
+        console.log(
+          `[Cache Hit] Using cached article content for slug: ${slug}, lang: ${lang}`
+        );
+        return cachedArticle; // 缓存有效，直接返回
+      }
+      if (!isCacheValid) {
+        console.log(
+          `[Cache Expired] Cached article content for slug: ${slug}, lang: ${lang} expired.`
+        );
+        localStorage.removeItem(cacheKey); // 移除过期缓存
+      }
+    } catch (e) {
+      console.error("[Cache Error] Error parsing cached article data:", e);
+      localStorage.removeItem(cacheKey); // 缓存数据损坏，移除
+      // 继续执行，从网络获取数据
+    }
+  }
+
+  // --- 2. 缓存无效或不存在，从网络获取 ---
   try {
-    // 注意：我们将 lang 作为查询参数传递
+    console.log(
+      `[Network Fetch] Fetching new article content for slug: ${slug}, lang: ${lang}`
+    );
+    // 使用 api.js 中封装的 fetchData 函数
     const data = await fetchData(
       `${ARTICLE_BASE_ENDPOINT}/slug/${slug}?lang=${lang}`
     );
+
+    // --- 3. 成功获取后，更新 LocalStorage 缓存 ---
+    // 设置缓存有效期为 24 小时 (与后端 R2 URL 有效期一致)
+    const expirationMs = 3600 * 24 * 1000; // 24小时的毫秒数
+    localStorage.setItem(
+      cacheKey,
+      JSON.stringify({
+        article: data,
+        expiresAt: Date.now() + expirationMs,
+      })
+    );
+
     return data;
   } catch (error) {
-    console.error(`Error fetching article with slug ${slug}:`, error);
-    throw error;
+    console.error(
+      `[Network Error] Error fetching article with slug ${slug}:`,
+      error
+    );
+    throw error; // 向上抛出错误，供组件层处理
   }
 };

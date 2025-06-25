@@ -1,6 +1,6 @@
 /* eslint-disable require-await */
 /* eslint-disable react/button-has-type */
-import React, { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useLocation } from "react-router-dom";
 import { getArticles, getSingleArticleBySlug } from "@services/articleService";
 import { useAlert } from "@hooks/useAlert";
