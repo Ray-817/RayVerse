@@ -13,11 +13,29 @@ function Footer() {
   const iconClasses = clsx("w-15", "h-15", "text-logo", "cursor-pointer");
   const textClasses = clsx("text-small", "text-light-text", "text-center");
   return (
-    <footer className={clsx("my-4", "border-t border-gray-300")}>
+    <footer className={clsx("my-4", "border-t border-gray-200")}>
       <div className={iconContainerClasses}>
-        <Icon name="github" className={iconClasses} />
-        <Icon name="linkedin" className={iconClasses} />
-        <Icon name="mail" className={iconClasses} />
+        <a
+          href="https://github.com/Ray-817"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="GitHub"
+        >
+          <Icon name="github" className={iconClasses} />
+        </a>
+
+        <a
+          href="https://www.linkedin.com/in/rayjiang728"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="LinkedIn"
+        >
+          <Icon name="linkedin" className={iconClasses} />
+        </a>
+
+        <a href="mailto:jiangzerui728@gmail.com" aria-label="Email">
+          <Icon name="mail" className={iconClasses} />
+        </a>
       </div>
       <p className={textClasses}>
         &copy; {new Date().getFullYear()} RayVerse. All rights reserved.

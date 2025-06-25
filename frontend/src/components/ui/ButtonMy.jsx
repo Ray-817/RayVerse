@@ -1,7 +1,13 @@
 /* eslint-disable react/button-has-type */
 import clsx from "clsx";
 
-function ButtonMy({ label, onClick, variant = "primary-my", icon = null }) {
+function ButtonMy({
+  label,
+  onClick,
+  variant = "primary-my",
+  icon = null,
+  className,
+}) {
   // Define base style classes for button
   const baseClasses = clsx(
     "inline-flex items-center justify-center",
@@ -24,7 +30,10 @@ function ButtonMy({ label, onClick, variant = "primary-my", icon = null }) {
   const labelClasses = clsx("text-5xl", "md:text-4xl", "mx-2 my-3");
 
   return (
-    <button className={clsx(baseClasses, variantClasses)} onClick={onClick}>
+    <button
+      className={clsx(baseClasses, variantClasses, className)}
+      onClick={onClick}
+    >
       {/* If icon is provided, render it, Otherwise, render the label*/}
       {icon && <span className={iconClasses}>{icon}</span>}
       <span className={labelClasses}>{label}</span>

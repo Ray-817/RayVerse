@@ -81,7 +81,7 @@ export function VideoCarousel() {
             {videos.videos.map((video) => (
               <CarouselItem key={video.id}>
                 <div className="p-1">
-                  <Card className=" bg-transparent shadow-none border-none">
+                  <Card className="bg-transparent shadow-none border-none">
                     <CardContent className="flex flex-col aspect-video items-center justify-center p-6">
                       <video
                         src={video.videoUrl} // 使用后端提供的预签名 URL

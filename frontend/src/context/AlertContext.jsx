@@ -3,7 +3,7 @@
 // src/context/AlertContext.jsx (简化版本，无动画，自动适应内容大小)
 
 import React, { createContext, useState, useCallback } from "react";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Alert, AlertDescription, AlertTitle } from "@components/ui/alert";
 import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -18,18 +18,21 @@ export const AlertProvider = ({ children }) => {
     description: "",
   });
 
-  const showAlert = useCallback((type, title, description, duration = 5000) => {
-    setAlert({ isVisible: true, type, title, description });
-    if (duration > 0) {
-      setTimeout(() => {
-        hideAlert();
-      }, duration); // 仅保留自动关闭功能
-    }
-  }, []);
-
   const hideAlert = useCallback(() => {
     setAlert((prev) => ({ ...prev, isVisible: false }));
   }, []);
+
+  const showAlert = useCallback(
+    (type, title, description, duration = 5000) => {
+      setAlert({ isVisible: true, type, title, description });
+      if (duration > 0) {
+        setTimeout(() => {
+          hideAlert();
+        }, duration); // 仅保留自动关闭功能
+      }
+    },
+    [hideAlert]
+  );
 
   return (
     <AlertContext.Provider value={{ showAlert, hideAlert }}>

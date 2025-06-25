@@ -7,14 +7,13 @@ import Icon from "@components/ui/Icon";
 import NavLinks from "@components/ui/NavLinks";
 import LanguageSelector from "@components/ui/LanguageSelector";
 import { useTranslation } from "react-i18next";
-import { getResumeDownloadLink } from "@services/resumeService";
-import { useAlert } from "@hooks/useAlert";
+import { useDownloadResume } from "@hooks/useDownload";
 
 function Navbar() {
   // State to manage the open/close state of the mobile menu
   const [isOpen, setIsOpen] = useState(false);
   const { t } = useTranslation();
-  const { showAlert } = useAlert();
+  const { handleDownload, loading } = useDownloadResume();
 
   // Control the body overflow when the menu is open
   useEffect(() => {
@@ -31,45 +30,6 @@ function Navbar() {
   // Function to toggle the mobile menu open/close state
   const toggleMenu = () => {
     setIsOpen(!isOpen);
-  };
-
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-
-  // 函数：获取 URL 中的查询参数 (这个逻辑仍然留在组件或一个更通用的 utils 中)
-  const getQueryParam = (param) => {
-    const urlParams = new URLSearchParams(window.location.search);
-    return urlParams.get(param);
-  };
-
-  const handleDownload = async () => {
-    setLoading(true);
-    setError(null);
-
-    const currentLanguage = getQueryParam("lang") || "en";
-
-    try {
-      const downloadUrl = await getResumeDownloadLink(currentLanguage);
-      const successTitle = t("successDownloadResumetitle");
-      const successMessage = t("successDownloadResumetitle");
-      showAlert("success", successTitle, successMessage, 3000);
-
-      const link = document.createElement("a");
-      link.href = downloadUrl;
-      link.setAttribute("download", `RayResume_${currentLanguage}.pdf`); // 设置下载文件名
-      link.setAttribute("target", "_blank"); // <-- 这行确保在新标签页打开
-      link.setAttribute("rel", "noopener noreferrer"); // <-- 安全性最佳实践
-
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    } catch (err) {
-      const failTitle = t("failDownloadResumetitle");
-      const failMessage = t("checkNetworkMessage");
-      showAlert("destructive", failTitle, failMessage, 3000);
-    } finally {
-      setLoading(false);
-    }
   };
 
   // Navbar styles
