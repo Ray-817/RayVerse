@@ -89,19 +89,18 @@ function ArticleList() {
   const fetchAndSetModalContent = useCallback(async (articleSlug, lang) => {
     if (!articleSlug || !lang) return;
 
-    // 移除这里的 setLoadingArticleContent(true); 因为调用方会设置
     setArticleContentError(null); // 仅保留错误状态的重置
 
     try {
+      // 这一步现在会从后端直接获取完整的文章数据，包括 Markdown 内容
       const fullArticleData = await getSingleArticleBySlug(articleSlug, lang);
-      const markdownResponse = await fetch(fullArticleData.markdownUrl);
-      if (!markdownResponse.ok) {
-        throw new Error(
-          `Failed to fetch markdown: ${markdownResponse.statusText}`
-        );
-      }
-      const markdownContent = await markdownResponse.text();
-      setSelectedArticle({ ...fullArticleData, content: markdownContent });
+
+      // 直接使用后端返回的 fullArticleData 中的 content 字段
+      // 假设后端现在返回的 fullArticleData 已经包含了 content 字段
+      setSelectedArticle({
+        ...fullArticleData,
+        content: fullArticleData.content,
+      });
     } catch (err) {
       const title = t("failFetchContent");
       const message = t("checkNetworkMessage");
@@ -113,7 +112,7 @@ function ArticleList() {
     } finally {
       setLoadingArticleContent(false); // 无论成功失败，都停止加载
     }
-  }, []);
+  }, []); // 依赖项不变，因为它依赖的是 getSingleArticleBySlug 这个函数调用
 
   useEffect(() => {
     const {

@@ -97,15 +97,18 @@ export const getSingleArticleBySlug = async (slug, lang) => {
 
     // --- 3. 成功获取后，更新 LocalStorage 缓存 ---
     // 设置缓存有效期为 24 小时 (与后端 R2 URL 有效期一致)
-    const expirationMs = 3600 * 24 * 1000; // 24小时的毫秒数
+    const backendExpiresInSeconds = 24 * 3600; // 后端设定的 24 小时
+    const frontendCacheExpirationSeconds = backendExpiresInSeconds - 300; // 减去 5 分钟的安全裕度
+    const expirationMs = frontendCacheExpirationSeconds * 1000;
+    const finalExpirationMs = Math.max(expirationMs, 60 * 1000); // 确保至少 1 分钟
+
     localStorage.setItem(
       cacheKey,
       JSON.stringify({
         article: data,
-        expiresAt: Date.now() + expirationMs,
+        expiresAt: Date.now() + finalExpirationMs,
       })
     );
-
     return data;
   } catch (error) {
     console.error(

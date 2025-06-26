@@ -1,6 +1,5 @@
 const express = require("express");
 const morgan = require("morgan");
-const i18n = require("./i18n");
 const cors = require("cors");
 const AppError = require("./utils/appError");
 const globalErrorHandler = require("./controller/errorController");
@@ -30,7 +29,6 @@ const corsOptions = {
 app.use(cors(corsOptions));
 
 app.use(express.json());
-app.use(i18n.init);
 
 // set root URL
 app.get("/", (req, res) => {

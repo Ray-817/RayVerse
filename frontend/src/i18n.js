@@ -1,29 +1,57 @@
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
-import LanguageDetector from "i18next-browser-languagedetector";
 
-import en from "./locales/en.json";
-import jp from "./locales/jp.json";
+import en from "./assets/locales/en.json";
+import jp from "./assets/locales/jp.json";
+import zhHans from "./assets/locales/zh-Hans.json"; // 可改文件名也行
+
+const customDetector = {
+  name: "customDetector",
+  lookup() {
+    const detected =
+      window.localStorage.getItem("i18nextLng") ||
+      new URLSearchParams(window.location.search).get("lang");
+
+    if (detected === "zh-Hans" || detected === "zh-hans") return "zhHans";
+    return detected;
+  },
+  cacheUserLanguage(lng) {
+    localStorage.setItem("i18nextLng", lng);
+  },
+};
 
 i18n
-  .use(LanguageDetector)
+  .use({
+    type: "languageDetector",
+    async: false,
+    init: () => {},
+    detect: customDetector.lookup,
+    cacheUserLanguage: customDetector.cacheUserLanguage,
+  })
   .use(initReactI18next)
   .init({
     resources: {
       en: en,
       jp: jp,
+      zhHans: zhHans,
     },
-    fallbackLng: "en", // 当当前语言没有翻译时，使用的备用语言
+    fallbackLng: "en",
+    supportedLngs: ["en", "jp", "zhHans"],
+    cleanCode: false,
+    lowerCaseLng: false,
     interpolation: {
-      escapeValue: false, // react already safes from xss
+      escapeValue: false,
     },
-    // **添加语言检测配置**
     detection: {
-      order: ["querystring", "localStorage", "navigator"], // 优先级：URL 查询参数 > localStorage > 浏览器语言
-      lookupQuerystring: "lang", // 从 URL 参数 'lang' 中查找语言
-      lookupLocalStorage: "i18nextLng", // 从 localStorage 的 'i18nextLng' 中查找语言
-      caches: ["localStorage"], // 将检测到的语言缓存到 localStorage
+      order: ["customDetector", "querystring", "localStorage", "navigator"],
+      lookupQuerystring: "lang",
+      lookupLocalStorage: "i18nextLng",
+      caches: ["localStorage"],
     },
   });
+
+if (i18n.language === "zh-Hans" || i18n.language === "zh-hans") {
+  i18n.changeLanguage("zhHans");
+}
 
 export default i18n;

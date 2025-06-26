@@ -78,17 +78,18 @@ export function VideoCarousel() {
       ) : (
         <Carousel className="w-full max-w-[75vw] sm:max-w-[75vw] mx-auto">
           <CarouselContent>
-            {videos.videos.map((video) => (
+            {/* 关键修改：直接 map `videos` 数组 */}
+            {videos.map((video) => (
               <CarouselItem key={video.id}>
                 <div className="p-1">
                   <Card className="bg-transparent shadow-none border-none">
                     <CardContent className="flex flex-col aspect-video items-center justify-center p-6">
                       <video
-                        src={video.videoUrl} // 使用后端提供的预签名 URL
-                        poster={video.posterUrl} // 使用后端提供的预签名 URL
+                        src={video.videoUrl}
+                        poster={video.posterUrl}
                         controls
                         className="object-contain bg-background-dark rounded-lg"
-                        preload="metadata" // 建议使用 metadata 或 auto
+                        preload="metadata"
                       >
                         Your Browser Doesn&apos;t Support Video Player!
                       </video>

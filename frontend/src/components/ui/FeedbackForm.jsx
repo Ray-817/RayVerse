@@ -22,49 +22,57 @@ function FeedbackForm() {
   const { t } = useTranslation();
   const { showAlert } = useAlert();
 
+  const GETFORM_ENDPOINT_URL = import.meta.env.VITE_FORM_ENDPOINT;
+
+  if (!GETFORM_ENDPOINT_URL) {
+    console.error(
+      "VITE_FORM_ENDPOINT is not defined in environment variables!"
+    );
+    showAlert("destructive", t("failSubmit"), t("networkErrorMessage"));
+  }
+
   const handleSubmit = async (event) => {
-    event.preventDefault(); // 阻止表单的默认提交行为
+    event.preventDefault();
 
     setIsLoading(true);
-    setError(null); // 清除之前的错误信息
+    setError(null);
 
     const form = event.target;
-    // 使用FormData来获取表单数据，包括Netlify的隐藏字段
     const formData = new FormData(form);
 
+    const data = {};
+    formData.forEach((value, key) => {
+      data[key] = value;
+    });
+
     try {
-      // Netlify会根据form-name属性识别表单，并处理POST请求
-      const response = await fetch("/", {
-        // 向当前路径POST请求，Netlify会拦截并处理
+      const response = await fetch(GETFORM_ENDPOINT_URL, {
+        // 使用环境变量
         method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: new URLSearchParams(formData).toString(),
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify(data),
       });
 
       if (response.ok) {
-        setIsSubmitted(true); // 设置提交成功状态
-        // 可选：清空表单字段
+        setIsSubmitted(true);
         form.reset();
+        showAlert("success", t("successSubmit"), t("successSubmitMessage"));
       } else {
-        // 如果Netlify返回了非2xx状态码（通常是由于配置问题或内部错误）
-        setError(t("checkNetworkMessage"));
+        const errorData = await response.json();
+        const errorMessage = errorData.message || t("checkNetworkMessage");
+        setError(errorMessage);
+        showAlert("destructive", t("failTitle"), errorMessage);
       }
     } catch (err) {
-      // 网络错误或其他异常
-      setError(error);
-      const title = t("failTitle");
-      const message = t("checkNetworkMessage");
-      showAlert("destructive", title, message);
+      setError(t("networkErrorMessage"));
+      showAlert("destructive", t("failTitle"), t("networkErrorMessage"));
     } finally {
       setIsLoading(false);
     }
   };
-
-  if (isSubmitted) {
-    const title = t("successSubmit");
-    const message = t("successSubmitMessage");
-    showAlert("success", title, message);
-  }
 
   return (
     <Card className="w-[70vw] mx-auto h-[40vh] bg-background-dark shadow-none border-none sm:w-[30vw] sm:h-auto">
@@ -74,14 +82,7 @@ function FeedbackForm() {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        {/* Netlify Form的关键部分：data-netlify="true" 和 name="contact" */}
-        <form
-          name="contact"
-          method="POST"
-          data-netlify="true"
-          data-netlify-honeypot="bot-field"
-          onSubmit={handleSubmit}
-        >
+        <form name="contact" method="POST" onSubmit={handleSubmit}>
           {/* 隐藏的输入框，用于Netlify的honeypot反垃圾邮件机制 */}
           <input type="hidden" name="form-name" value="contact" />
           <p className="hidden">

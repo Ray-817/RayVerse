@@ -48,7 +48,8 @@ export const AlertProvider = ({ children }) => {
             // Laptop: 距离右侧和底部加大到 right-8 md:bottom-8 (原right-4 md:bottom-4)，
             // 宽度调整为 max-w-2xl (原max-w-md，增大)，且不需要 translate-x-0 来重置
             "md:left-auto md:right-15 md:bottom-8 md:translate-x-0 md:w-auto md:max-w-4xl", // 右侧和底部边距增大，最大宽度增大
-            "flex flex-col gap-2"
+            "flex flex-col gap-2",
+            "bg-background-dark rounded-3xl"
           )}
         >
           <Alert
@@ -59,7 +60,7 @@ export const AlertProvider = ({ children }) => {
               {alert.title}
               <button
                 onClick={hideAlert}
-                className="p-1 rounded-md hover:bg-opacity-80 transition-colors ml-8"
+                className="p-1 rounded-md hover:bg-opacity-100 transition-colors ml-8"
                 aria-label="Close alert"
               >
                 <X className="h-8 w-8" />

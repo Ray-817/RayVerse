@@ -8,50 +8,63 @@ const VIDEO_BASE_ENDPOINT = "/videos";
  * @throws {Error} 如果网络请求失败或响应不 OK。
  */
 export async function fetchVideos() {
-  const cacheKey = `all_videos_data`; // 为视频列表定义一个固定的缓存键
+  const cacheKey = `all_videos_data`;
   const cachedData = localStorage.getItem(cacheKey);
 
   // --- 1. 检查 LocalStorage 缓存 ---
   if (cachedData) {
     try {
       const { videos: cachedVideos, expiresAt } = JSON.parse(cachedData);
-      // 检查缓存是否过期 (与后端 R2 URL 有效期保持一致，例如 24 小时)
       const isCacheValid = Date.now() < expiresAt;
 
       if (isCacheValid) {
         console.log(`[Cache Hit] Using cached video data.`);
-        return cachedVideos; // 缓存有效，直接返回
+        return cachedVideos;
       }
       if (!isCacheValid) {
+        // 冗余检查，如果上面的 if 没通过，肯定就是 !isCacheValid
         console.log(`[Cache Expired] Cached video data expired.`);
-        localStorage.removeItem(cacheKey); // 移除过期缓存
+        localStorage.removeItem(cacheKey);
       }
     } catch (e) {
       console.error("[Cache Error] Error parsing cached video data:", e);
-      localStorage.removeItem(cacheKey); // 缓存数据损坏，移除
-      // 继续执行，从网络获取数据
+      localStorage.removeItem(cacheKey);
     }
   }
 
   // --- 2. 缓存无效或不存在，从网络获取 ---
   try {
     console.log(`[Network Fetch] Fetching new video data from backend.`);
-    const videos = await fetchData(VIDEO_BASE_ENDPOINT); // 调用通用的 fetchData 函数
+    // 调用通用的 fetchData 函数，它会返回后端响应的完整 JSON 对象
+    const responseData = await fetchData(VIDEO_BASE_ENDPOINT);
 
-    // --- 3. 成功获取后，更新 LocalStorage 缓存 ---
-    // 设置缓存有效期为 24 小时 (与后端 R2 URL 有效期一致)
-    const expirationMs = 3600 * 24 * 1000; // 24小时的毫秒数
+    // --- 关键修改：从后端响应中提取实际的视频数组 ---
+    // 你的后端返回的是 { status: "success", results: ..., videos: [...] }
+    // 所以你需要访问 responseData.videos
+    const videosArray = responseData.videos;
+
+    if (!videosArray) {
+      throw new Error(
+        "Invalid video data structure from backend: 'videos' array not found."
+      );
+    }
+
+    const backendExpiresInSeconds = 24 * 3600; // 后端设定的 24 小时
+    const frontendCacheExpirationSeconds = backendExpiresInSeconds - 300; // 减去 5 分钟的安全裕度
+    const expirationMs = frontendCacheExpirationSeconds * 1000;
+    const finalExpirationMs = Math.max(expirationMs, 60 * 1000); // 确保至少 1 分钟
+
     localStorage.setItem(
       cacheKey,
       JSON.stringify({
-        videos: videos,
-        expiresAt: Date.now() + expirationMs,
+        videos: videosArray,
+        expiresAt: Date.now() + finalExpirationMs,
       })
     );
 
-    return videos;
+    return videosArray; // 返回实际的视频数组给组件
   } catch (error) {
     console.error("Error fetching videos in videoService:", error);
-    throw error; // 重新抛出错误，供组件层处理
+    throw error;
   }
 }

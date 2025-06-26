@@ -4,8 +4,6 @@ const AppError = require("../utils/appError");
 const { getR2PresignedUrl } = require("../utils/r2Client");
 const { r2UrlAccessLimiter } = require("../middlewares/rateLimiter");
 
-const R2_URL_EXPIRATION_SECONDS = 3600 * 24; // 24小时
-
 exports.getAllThumbnails = [
   r2UrlAccessLimiter, // 应用频率限制中间件
   catchAsync(async (req, res, next) => {
@@ -29,7 +27,7 @@ exports.getAllThumbnails = [
 
         const thumbnailUrl = await getR2PresignedUrl(
           image.thumbnailUrl,
-          R2_URL_EXPIRATION_SECONDS // 使用统一的有效期
+          process.env.EXPIRED_TIME
         );
 
         return {
@@ -74,7 +72,7 @@ exports.getSingleImageBySlug = [
     // 假设 image.imageUrl 存储高清图的 R2 key
     const imageUrl = await getR2PresignedUrl(
       image.imageUrl,
-      R2_URL_EXPIRATION_SECONDS // 使用统一的有效期
+      process.env.EXPIREDD_TIME
     );
 
     const formattedImage = {

@@ -9,7 +9,7 @@ import {
   DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,
-} from "@/components/ui/dropdown-menu";
+} from "@components/ui/dropdown-menu";
 
 import Icon from "@components/ui/Icon";
 import config from "../../config/appConfig";
@@ -22,6 +22,7 @@ function LanguageSelector() {
   const languages = [
     { code: "en", name: "English" },
     { code: "jp", name: "日本語" },
+    { code: "zhHans", name: "简体中文" },
   ];
 
   // 从 URL 查询参数中获取当前语言
@@ -62,6 +63,8 @@ function LanguageSelector() {
     const newUrl = `${location.pathname}?${currentParams.toString()}`;
     navigate(newUrl); // 导航到新的 URL
   };
+
+  // window.location.reload();
 
   const currentLangName =
     languages.find((l) => l.code === currentSelectedLang)?.name || "Language"; // 使用 currentSelectedLang 来显示当前语言名称

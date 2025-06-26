@@ -21,6 +21,11 @@ const articleSchema = new mongoose.Schema(
         required: [true, "Article should has title."],
         trim: true,
       },
+      zhHans: {
+        type: String,
+        required: [true, "Article should has title."],
+        trim: true,
+      },
     },
     summary: {
       en: {
@@ -29,6 +34,11 @@ const articleSchema = new mongoose.Schema(
         trim: true,
       },
       jp: {
+        type: String,
+        required: [true, "Article should has summary."],
+        trim: true,
+      },
+      zhHans: {
         type: String,
         required: [true, "Article should has summary."],
         trim: true,
@@ -51,6 +61,11 @@ const articleSchema = new mongoose.Schema(
         trim: true,
       },
       jp: {
+        type: String,
+        required: [true, "Article should has URL."],
+        trim: true,
+      },
+      zhHans: {
         type: String,
         required: [true, "Article should has URL."],
         trim: true,

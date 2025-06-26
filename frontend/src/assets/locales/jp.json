@@ -26,7 +26,7 @@
     "name": "お名前",
     "namePlaceholder": "例：佐藤",
     "mail": "メールアドレス",
-    "mailPlaceholder": "例: yourname@example.com",
+    "mailPlaceholder": "例：yourname@example.com",
     "feedback": "メッセージ",
     "feedbackPlaceholder": "ご意見・ご感想、ご質問など、こちらにご記入ください。",
     "hideLabel": "Don't fill this out if you're human:",

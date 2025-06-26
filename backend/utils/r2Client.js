@@ -1,15 +1,5 @@
 const { S3Client, GetObjectCommand } = require("@aws-sdk/client-s3");
 const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
-const rateLimit = require("express-rate-limit");
-require("dotenv").config();
-
-const apiLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 50, // Limit each IP to 50 requests per `windowMs`
-  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
-  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
-  message: "Too many requests from this IP, please try again after 15 minutes.",
-});
 
 const r2Client = new S3Client({
   region: "auto",
@@ -31,7 +21,7 @@ const R2_BUCKET_NAME = process.env.R2_BUCKET_NAME;
  */
 exports.getR2PresignedUrl = async function getR2PresignedUrl(
   objectKey,
-  expiresIn = 3600
+  expiresIn = 24 * 3600
 ) {
   const command = new GetObjectCommand({
     Bucket: R2_BUCKET_NAME,

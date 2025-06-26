@@ -22,7 +22,10 @@ exports.getResume = [
     const objectKey = resumeData.resumeUrl;
 
     // 2. 调用工具函数生成预签名 URL
-    const presignedUrl = await getR2PresignedUrl(objectKey);
+    const presignedUrl = await getR2PresignedUrl(
+      objectKey,
+      process.env.EXPIRED_TIME
+    );
 
     // 3. 将预签名 URL 返回给前端
     res.status(200).json({ status: "success", url: presignedUrl });

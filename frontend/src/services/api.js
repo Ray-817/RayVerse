@@ -1,9 +1,7 @@
 import config from "@config/appConfig";
 
-const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || "http://localhost:3030/api/v1"; // 根据你的后端地址调整
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL; // 根据你的后端地址调整
 // 使用 import.meta.env 来获取 Vite 环境变量
-
 const timeout = function (s) {
   return new Promise(function (_, reject) {
     setTimeout(function () {
