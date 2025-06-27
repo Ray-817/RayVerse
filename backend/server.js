@@ -12,7 +12,7 @@ mongoose.connect(DB).then(() => {
   console.log("Cloud DB connected!");
 });
 
-const port = process.env.PORT;
+const port = process.env.PORT || 3030;
 // listen to the server
 app.listen(port, () => {
   console.log(`App running on port ${port}`);

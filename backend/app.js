@@ -22,6 +22,9 @@ if (process.env.NODE_ENV === "development") {
   console.log("Running in production mode");
 }
 
+const allowedOrigins =
+  process.env.NODE_ENV === "production" ? process.env.FRONTEND_URL : "*";
+
 // **CORS 配置 (非常重要!)**
 // 允许前端开发服务器的源访问你的后端
 // 在开发阶段，允许来自 Vite 开发服务器的请求
