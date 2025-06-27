@@ -1,6 +1,6 @@
 import config from "@config/appConfig";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL; // 根据你的后端地址调整
+const API_BASE_URL = config.API_BASE_URL; // 根据你的后端地址调整
 // 使用 import.meta.env 来获取 Vite 环境变量
 const timeout = function (s) {
   return new Promise(function (_, reject) {
@@ -18,6 +18,7 @@ const timeout = function (s) {
  */
 export async function fetchData(endpoint, options = {}) {
   const url = `${API_BASE_URL}${endpoint}`;
+  console.log(url);
   try {
     const response = await Promise.race([
       fetch(url, {
