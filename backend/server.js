@@ -8,22 +8,15 @@ const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 dotenv.config({ path: "./config.env" });
 
-// --- 添加这两行日志 ---
-console.log("Attempting to connect to MongoDB with URI (masked password):");
-console.log(DB.replace(process.env.DATABASE_PASSWORD, "********")); // 打印连接字符串，但隐藏密码
-// ---
+// DB connection
+const DB = process.env.DATABASE.replace(
+  "<PASSWORD>",
+  process.env.DATABASE_PASSWORD
+);
 
-mongoose
-  .connect(DB)
-  .then(() => {
-    console.log("Cloud DB connected!");
-  })
-  .catch((err) => {
-    console.error("MongoDB connection error:", err.message); // 打印更简洁的错误信息
-    console.error("Full Mongoose error object:", err); // 打印完整的错误对象，以便在 Vercel logs 中查看详细信息
-    // 如果连接失败，应用程序将无法正常工作，可以考虑在这里退出
-    // process.exit(1);
-  });
+mongoose.connect(DB).then(() => {
+  console.log("Cloud DB connected!");
+});
 
 // const port = process.env.PORT;
 // // listen to the server
