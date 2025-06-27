@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import { useState } from "react";
-import config from "../config/appConfig";
+import config from "../../config/appConfig";
 
 import {
   Card,
