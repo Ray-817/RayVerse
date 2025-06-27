@@ -86,33 +86,36 @@ function ArticleList() {
     [showAlert, t]
   );
 
-  const fetchAndSetModalContent = useCallback(async (articleSlug, lang) => {
-    if (!articleSlug || !lang) return;
+  const fetchAndSetModalContent = useCallback(
+    async (articleSlug, lang) => {
+      if (!articleSlug || !lang) return;
 
-    setArticleContentError(null); // 仅保留错误状态的重置
+      setArticleContentError(null); // 仅保留错误状态的重置
 
-    try {
-      // 这一步现在会从后端直接获取完整的文章数据，包括 Markdown 内容
-      const fullArticleData = await getSingleArticleBySlug(articleSlug, lang);
+      try {
+        // 这一步现在会从后端直接获取完整的文章数据，包括 Markdown 内容
+        const fullArticleData = await getSingleArticleBySlug(articleSlug, lang);
 
-      // 直接使用后端返回的 fullArticleData 中的 content 字段
-      // 假设后端现在返回的 fullArticleData 已经包含了 content 字段
-      setSelectedArticle({
-        ...fullArticleData,
-        content: fullArticleData.content,
-      });
-    } catch (err) {
-      const title = t("failFetchContent");
-      const message = t("checkNetworkMessage");
-      console.error("Error loading article content:", err);
-      setArticleContentError(message);
-      showAlert("destructive", title, message);
-      setSelectedArticle(null); // 如果获取失败，关闭模态框
-      setModalArticleSlug(null); // 重置 slug
-    } finally {
-      setLoadingArticleContent(false); // 无论成功失败，都停止加载
-    }
-  }, []); // 依赖项不变，因为它依赖的是 getSingleArticleBySlug 这个函数调用
+        // 直接使用后端返回的 fullArticleData 中的 content 字段
+        // 假设后端现在返回的 fullArticleData 已经包含了 content 字段
+        setSelectedArticle({
+          ...fullArticleData,
+          content: fullArticleData.content,
+        });
+      } catch (err) {
+        const title = t("failFetchContent");
+        const message = t("checkNetworkMessage");
+        console.error("Error loading article content:", err);
+        setArticleContentError(message);
+        showAlert("destructive", title, message);
+        setSelectedArticle(null); // 如果获取失败，关闭模态框
+        setModalArticleSlug(null); // 重置 slug
+      } finally {
+        setLoadingArticleContent(false); // 无论成功失败，都停止加载
+      }
+    },
+    [showAlert, t]
+  ); // 依赖项不变，因为它依赖的是 getSingleArticleBySlug 这个函数调用
 
   useEffect(() => {
     const {
