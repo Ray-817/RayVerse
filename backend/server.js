@@ -40,7 +40,7 @@ if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
   console.log("Running in development mode");
 } else if (process.env.NODE_ENV === "production") {
-  app.use(morgan("combined")); // 或 'tiny'
+  app.use(morgan("tiny")); // 或 'tiny'
   console.log("Running in production mode");
 }
 
@@ -56,6 +56,8 @@ const corsOptions = {
 app.use(cors(corsOptions));
 
 app.use(express.json());
+
+app.set("trust proxy", true);
 
 // set root URL
 app.get("/", (req, res) => {
