@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-vars */
 import { useState } from "react";
+import config from "../config/appConfig";
 
 import {
   Card,
@@ -22,7 +23,7 @@ function FeedbackForm() {
   const { t } = useTranslation();
   const { showAlert } = useAlert();
 
-  const GETFORM_ENDPOINT_URL = import.meta.env.VITE_FORM_ENDPOINT;
+  const GETFORM_ENDPOINT_URL = config.FORM_ENDPOINT;
 
   if (!GETFORM_ENDPOINT_URL) {
     console.error(

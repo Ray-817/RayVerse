@@ -3,9 +3,8 @@
   "version": "1.0.0",
   "description": "The backend application of Rayverse.",
   "scripts": {
-    "start:dev": "NODE_ENV=development nodemon server.js",
-    "start": "NODE_ENV=production node server.js",
-    "build": "echo 'No build step required for backend'"
+    "start": "NODE_ENV=development nodemon server.js",
+    "start:prod": "set NODE_ENV=production&&nodemon server.js"
   },
   "author": "Ray Jiang",
   "license": "ISC",
@@ -33,6 +32,6 @@
     "validator": "^13.15.15"
   },
   "devDependencies": {
-    "nodemon": "^3.1.0"
+    "nodemon": "^3.1.10"
   }
 }
