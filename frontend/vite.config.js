@@ -1,10 +1,9 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
-import prerender from "vite-plugin-prerender";
+import ssr from "vite-plugin-ssr/plugin";
 import { fileURLToPath } from "url";
 import path from "path";
-import { config } from "@config/appConfig";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -14,18 +13,18 @@ export default defineConfig({
   plugins: [
     react(),
     tailwindcss(),
-    prerender({
-      routes: ["/"],
-      staticDir: path.join(__dirname, "dist"), // 输出目录
-      rendererOptions: {
-        renderAfterTime: 500,
+    ssr({
+      // 启用预渲染
+      prerender: true,
+      pageFiles: {
+        paths: path.join(__dirname, "src", "pages"),
       },
     }),
   ],
   server: {
     proxy: {
       "/api/v1": {
-        target: config.API_BASE_URL,
+        target: `http://localhost:3030`,
         changeOrigin: true,
       },
     },
