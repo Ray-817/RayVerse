@@ -2,7 +2,7 @@
 // src/renderer/_default.page.client.jsx
 import React from "react";
 import { hydrateRoot } from "react-dom/client";
-import { PageContext } from "./PageContext"; // 创建一个 Context 来传递 pageContext
+import { PageContext } from "./pageContext"; // 创建一个 Context 来传递 pageContext
 import { I18nextProvider } from "react-i18next"; // 确保导入 I18nextProvider
 import i18nClient from "../i18n/i18n.client"; // 导入客户端的 i18n 配置
 
