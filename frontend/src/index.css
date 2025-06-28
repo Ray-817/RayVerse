@@ -117,3 +117,26 @@
     @apply border-border outline-ring/50;
   }
 }
+
+@layer components {
+  .fade-in-section {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+  }
+
+  .fade-in-section.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .logo-hover-effect {
+    /* 初始状态 */
+    transition: transform 0.2s ease-in-out, fill 0.3s ease-in-out; /* 平滑过渡 */
+  }
+
+  .logo-hover-effect:hover {
+    transform: scale(1.1);
+    fill: theme("colors.text-my");
+  }
+}

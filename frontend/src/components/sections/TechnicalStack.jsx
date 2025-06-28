@@ -2,6 +2,7 @@
 import clsx from "clsx";
 import Icon from "@components/ui/Icon";
 import { useTranslation } from "react-i18next";
+import FadeInOnScroll from "@components/layout/FadeInOnScroll";
 
 function TechnicalStack() {
   const { t } = useTranslation();
@@ -29,69 +30,71 @@ function TechnicalStack() {
     "px-10 py-5"
   );
 
-  const logoClasses = clsx("w-25 h-25 fill-logo");
+  const logoClasses = clsx("w-25 h-25 fill-logo", "logo-hover-effect");
 
   const titleClasses = clsx("whitespace-nowrap mb-6", "text-6xl md:text-5xl");
 
   return (
-    <section className={sectionClasses} id="stack">
-      <h2>{t("tech")}</h2>
-      <div className={containerClasses}>
-        <div className={cardClasses}>
-          <span className={titleClasses}>{t("my_stack")}</span>
-          <div className={iconContainerClasses}>
-            <div title="React.js">
-              <Icon name="react" className={logoClasses}></Icon>
-            </div>
+    <FadeInOnScroll>
+      <section className={sectionClasses} id="stack">
+        <h2>{t("tech")}</h2>
+        <div className={containerClasses}>
+          <div className={cardClasses}>
+            <span className={titleClasses}>{t("my_stack")}</span>
+            <div className={iconContainerClasses}>
+              <div title="React.js">
+                <Icon name="react" className={logoClasses}></Icon>
+              </div>
 
-            <div title="Node.js">
-              <Icon name="nodejs" className={logoClasses}></Icon>
-            </div>
+              <div title="Node.js">
+                <Icon name="nodejs" className={logoClasses}></Icon>
+              </div>
 
-            <div title="MongoDB">
-              <Icon name="mongodb" className={logoClasses}></Icon>
-            </div>
+              <div title="MongoDB">
+                <Icon name="mongodb" className={logoClasses}></Icon>
+              </div>
 
-            <div title="Tailwind CSS">
-              <Icon name="tailwind" className={logoClasses}></Icon>
-            </div>
+              <div title="Tailwind CSS">
+                <Icon name="tailwind" className={logoClasses}></Icon>
+              </div>
 
-            <div title="Cloudflare">
-              <Icon name="cloudflare" className={logoClasses}></Icon>
-            </div>
+              <div title="Cloudflare">
+                <Icon name="cloudflare" className={logoClasses}></Icon>
+              </div>
 
-            <Icon name="ellipsis" className={logoClasses}></Icon>
+              <Icon name="ellipsis" className={logoClasses}></Icon>
+            </div>
+          </div>
+
+          <div className={cardClasses}>
+            <span className={titleClasses}>{t("to_learn")}</span>
+            <div className={iconContainerClasses}>
+              <div title="Vue.js">
+                <Icon name="vue" className={logoClasses}></Icon>
+              </div>
+
+              <div title="TypeScript">
+                <Icon name="typescript" className={logoClasses}></Icon>
+              </div>
+
+              <div title="Laravel(PHP)">
+                <Icon name="laravel" className={logoClasses}></Icon>
+              </div>
+
+              <div title="Golang">
+                <Icon name="go" className={logoClasses}></Icon>
+              </div>
+
+              <div title="Docker">
+                <Icon name="docker" className={logoClasses}></Icon>
+              </div>
+
+              <Icon name="ellipsis" className={logoClasses}></Icon>
+            </div>
           </div>
         </div>
-
-        <div className={cardClasses}>
-          <span className={titleClasses}>{t("to_learn")}</span>
-          <div className={iconContainerClasses}>
-            <div title="Vue.js">
-              <Icon name="vue" className={logoClasses}></Icon>
-            </div>
-
-            <div title="TypeScript">
-              <Icon name="typescript" className={logoClasses}></Icon>
-            </div>
-
-            <div title="Laravel(PHP)">
-              <Icon name="laravel" className={logoClasses}></Icon>
-            </div>
-
-            <div title="Golang">
-              <Icon name="go" className={logoClasses}></Icon>
-            </div>
-
-            <div title="Docker">
-              <Icon name="docker" className={logoClasses}></Icon>
-            </div>
-
-            <Icon name="ellipsis" className={logoClasses}></Icon>
-          </div>
-        </div>
-      </div>
-    </section>
+      </section>
+    </FadeInOnScroll>
   );
 }
 

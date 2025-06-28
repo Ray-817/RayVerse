@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import Combobox from "@components/ui/ComoboBox";
 import ArticleList from "@components/ui/ArticlesList";
+import FadeInOnScroll from "@components/layout/FadeInOnScroll";
 
 function MyTakes() {
   const { t } = useTranslation();
@@ -16,7 +17,7 @@ function MyTakes() {
   );
 
   const titleContainerClasses = clsx(
-    "flex ml-[16vw] items-center gap-x-8 justify-start"
+    "flex ml-20 items-center gap-x-8 justify-start sm:ml-[16vw] "
   );
 
   // 从 URL 获取当前的分类，默认为 'all'
@@ -51,16 +52,18 @@ function MyTakes() {
   );
 
   return (
-    <section className={sectionClasses} id="takes">
-      <div className={titleContainerClasses}>
-        <h2 className="text-left">{t("take-title")}</h2>
-        <Combobox
-          value={selectedCategory} // 将从 URL 读取的当前分类传递给 Combobox
-          onValueChange={handleCategoryChange} // 将更新 URL 的函数传递给 Combobox
-        />
-      </div>
-      <ArticleList />
-    </section>
+    <FadeInOnScroll>
+      <section className={sectionClasses} id="takes">
+        <div className={titleContainerClasses}>
+          <h2 className="text-left">{t("take-title")}</h2>
+          <Combobox
+            value={selectedCategory} // 将从 URL 读取的当前分类传递给 Combobox
+            onValueChange={handleCategoryChange} // 将更新 URL 的函数传递给 Combobox
+          />
+        </div>
+        <ArticleList />
+      </section>
+    </FadeInOnScroll>
   );
 }
 

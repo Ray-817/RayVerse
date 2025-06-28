@@ -47,6 +47,9 @@
     "noArticles": "このカテゴリには記事がありません。",
     "failFetchImages": "⛔画像の取得に失敗しました",
     "failLoadImage": "⛔画像の完全な読み込みに失敗しました",
-    "failFetchVideos": "⛔動画の取得に失敗しました"
+    "failFetchVideos": "⛔動画の取得に失敗しました",
+    "tooManyRequestsTitle": "⛔リクエストが多すぎます",
+    "tooManyRequestsMessage": "しばらくしてから再度お試しください。",
+    "configErrorMessage": "設定ファイルエラー"
   }
 }

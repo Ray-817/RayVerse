@@ -18,7 +18,6 @@ const timeout = function (s) {
  */
 export async function fetchData(endpoint, options = {}) {
   const url = `${API_BASE_URL}${endpoint}`;
-  console.log(url);
   try {
     const response = await Promise.race([
       fetch(url, {

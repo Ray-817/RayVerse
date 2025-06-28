@@ -47,6 +47,9 @@
     "noArticles": "No articles found in this category.",
     "failFetchImages": "⛔Failed to get Images",
     "failLoadImage": "⛔Failed to load full image",
-    "failFetchVideos": "⛔Failed to get Videos"
+    "failFetchVideos": "⛔Failed to get Videos",
+    "tooManyRequestsTitle": "⛔Too Many Requests",
+    "tooManyRequestsMessage": "Please try again later.",
+    "configErrorMessage": "Configuration Error."
   }
 }

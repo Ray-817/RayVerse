@@ -8,7 +8,7 @@
     "contact": "联系我",
     "resume": "简历",
     "myResume": "我的简历",
-    "my_stack": "技术栈",
+    "my_stack": "已使用",
     "to_learn": "待学习",
     "intro": "我拥有四年的计算机科学背景，并具备出色的学习和沟通能力，我十分期待与你协作，并解决实际问题。",
     "learning": "学习力",
@@ -47,6 +47,9 @@
     "noArticles": "此类别下没有找到文章。",
     "failFetchImages": "⛔获取图片失败",
     "failLoadImage": "⛔加载图片失败",
-    "failFetchVideos": "⛔获取视频失败"
+    "failFetchVideos": "⛔获取视频失败",
+    "tooManyRequestsTitle": "⛔提交次数太多",
+    "tooManyRequestsMessage": "请稍后再试。",
+    "configErrorMessage": "配置文件错误。"
   }
 }

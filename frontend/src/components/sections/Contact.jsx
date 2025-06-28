@@ -3,6 +3,7 @@ import FeedbackForm from "@components/ui/FeedbackForm";
 import ButtonMy from "@components/ui/ButtonMy";
 import { useTranslation } from "react-i18next";
 import { useDownloadResume } from "@hooks/useDownload";
+import FadeInOnScroll from "@components/layout/FadeInOnScroll";
 
 function Contact() {
   const { t } = useTranslation();
@@ -15,22 +16,24 @@ function Contact() {
   );
 
   return (
-    <section className={sectionClasses} id="contact">
-      <div className="flex flex-col font-semibold justify-between items-center">
-        <div className="sm:ml-50">
-          <h3 className="text-5xl mb-8">{t("thank1")}</h3>
-          <h3 className="text-5xl">{t("thank2")}</h3>
+    <FadeInOnScroll>
+      <section className={sectionClasses} id="contact">
+        <div className="flex flex-col font-semibold justify-between items-center">
+          <div className="sm:ml-50">
+            <h3 className="text-5xl mb-8">{t("thank1")}</h3>
+            <h3 className="text-5xl">{t("thank2")}</h3>
+          </div>
+          <div className="mt-15 sm:ml-54">
+            <ButtonMy
+              label={t("myResume")}
+              onClick={handleDownload}
+              disabled={loading}
+            />
+          </div>
         </div>
-        <div className="mt-15 sm:ml-54">
-          <ButtonMy
-            label={t("myResume")}
-            onClick={handleDownload}
-            disabled={loading}
-          />
-        </div>
-      </div>
-      <FeedbackForm />
-    </section>
+        <FeedbackForm />
+      </section>
+    </FadeInOnScroll>
   );
 }
 

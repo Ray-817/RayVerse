@@ -1,6 +1,5 @@
 /* eslint-disable no-unused-vars */
 import { useState } from "react";
-import config from "../../config/appConfig";
 
 import {
   Card,
@@ -15,6 +14,7 @@ import { Textarea } from "@components/ui/textarea";
 import { Button } from "@components/ui/Button";
 import { useTranslation } from "react-i18next";
 import { useAlert } from "@hooks/useAlert";
+import config from "@config/appConfig";
 
 function FeedbackForm() {
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -23,17 +23,41 @@ function FeedbackForm() {
   const { t } = useTranslation();
   const { showAlert } = useAlert();
 
-  const GETFORM_ENDPOINT_URL = config.FORM_ENDPOINT;
+  // 从环境变量获取 Web3Forms Access Key
+  const WEB3FORMS_ACCESS_KEY = config.FORM_API;
 
-  if (!GETFORM_ENDPOINT_URL) {
-    console.error(
-      "VITE_FORM_ENDPOINT is not defined in environment variables!"
-    );
-    showAlert("destructive", t("failSubmit"), t("networkErrorMessage"));
-  }
+  // Web3Forms 的通用提交 Endpoint
+  const WEB3FORMS_ENDPOINT_URL = "https://api.web3forms.com/submit";
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+
+    // 基本的客户端提交冷却检查 (可选，但推荐作为第一道防线)
+    const COOLDOWN_MINUTES = 2; // 2分钟冷却时间
+    const lastSubmitTime = localStorage.getItem("lastWeb3FormSubmitTime");
+    if (lastSubmitTime) {
+      const now = Date.now();
+      const lastTime = parseInt(lastSubmitTime, 10);
+      const diffMinutes = (now - lastTime) / (1000 * 60);
+      if (diffMinutes < COOLDOWN_MINUTES) {
+        showAlert(
+          "destructive",
+          t("tooManyRequestsTitle"),
+          t("tooManyRequestsMessage", {
+            time: COOLDOWN_MINUTES - Math.floor(diffMinutes),
+          })
+        );
+        return; // 阻止提交
+      }
+    }
+
+    if (!WEB3FORMS_ACCESS_KEY) {
+      console.error(
+        "Web3Forms Access Key is not defined! Please check your .env files and Cloudflare Pages environment variables."
+      );
+      showAlert("destructive", t("failTitle"), t("configErrorMessage")); // 提示配置错误
+      return;
+    }
 
     setIsLoading(true);
     setError(null);
@@ -45,31 +69,34 @@ function FeedbackForm() {
     formData.forEach((value, key) => {
       data[key] = value;
     });
+    data.access_key = WEB3FORMS_ACCESS_KEY;
 
     try {
-      const response = await fetch(GETFORM_ENDPOINT_URL, {
-        // 使用环境变量
+      const response = await fetch(WEB3FORMS_ENDPOINT_URL, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type": "application/json", // Web3Forms 推荐 JSON
           Accept: "application/json",
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify(data), // 将数据转换为 JSON 字符串发送
       });
 
-      if (response.ok) {
-        setIsSubmitted(true);
-        form.reset();
+      const result = await response.json(); // 解析 Web3Forms 返回的 JSON 响应
+
+      if (result.success) {
+        // Web3Forms 返回 { success: true } 表示成功
+        localStorage.setItem("lastWeb3FormSubmitTime", Date.now().toString()); // 提交成功后设置时间戳
+        setIsSubmitted(true); // 设置提交成功状态
+        form.reset(); // 清空表单字段
         showAlert("success", t("successSubmit"), t("successSubmitMessage"));
       } else {
-        const errorData = await response.json();
-        const errorMessage = errorData.message || t("checkNetworkMessage");
+        // Web3Forms 返回 { success: false, message: "..." }
+        const errorMessage = result.message;
         setError(errorMessage);
-        showAlert("destructive", t("failTitle"), errorMessage);
+        showAlert("destructive", t("failSubmit"), t("checkNetworkMessage"));
       }
     } catch (err) {
-      setError(t("networkErrorMessage"));
-      showAlert("destructive", t("failTitle"), t("networkErrorMessage"));
+      showAlert("destructive", t("failSubmit"), t("checkNetworkMessage"));
     } finally {
       setIsLoading(false);
     }
@@ -83,12 +110,13 @@ function FeedbackForm() {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <form name="contact" method="POST" onSubmit={handleSubmit}>
-          {/* 隐藏的输入框，用于Netlify的honeypot反垃圾邮件机制 */}
-          <input type="hidden" name="form-name" value="contact" />
-          <p className="hidden">
-            <label>{t("hideLabel")}</label>
-          </p>
+        <form onSubmit={handleSubmit}>
+          <div
+            style={{ position: "absolute", left: "-5000px" }}
+            aria-hidden="true"
+          >
+            <input type="text" name="botcheck" tabIndex="-1" />
+          </div>
 
           <div className="grid w-full items-center gap-4 ">
             <div className="flex flex-col space-y-3">

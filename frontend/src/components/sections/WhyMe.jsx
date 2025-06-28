@@ -3,6 +3,7 @@ import avatar from "../../assets/avatar.jpg";
 import clsx from "clsx";
 import AbilityChart from "@components/ui/AbilityChart";
 import { useTranslation } from "react-i18next";
+import FadeInOnScroll from "@components/layout/FadeInOnScroll";
 
 function WhyMe() {
   const { t } = useTranslation();
@@ -41,33 +42,35 @@ function WhyMe() {
   );
 
   return (
-    <section className={sectionClasses} id="why">
-      <h2>{t("why")}</h2>
+    <FadeInOnScroll>
+      <section className={sectionClasses} id="why">
+        <h2>{t("why")}</h2>
 
-      <div className={containerClasses}>
-        <div className={infoClasses}>
-          <div className={avatarContainerClasses}>
-            <img
-              src={avatar}
-              alt="Ray Jiang"
-              className="w-full h-full object-cover"
-            />
+        <div className={containerClasses}>
+          <div className={infoClasses}>
+            <div className={avatarContainerClasses}>
+              <img
+                src={avatar}
+                alt="Ray Jiang"
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <div className="text-center mt-2">
+              <span className="block text-6xl mb-5">Ray Jiang</span>
+              <span className="block text-5xl">{age}</span>
+            </div>
           </div>
-          <div className="text-center mt-2">
-            <span className="block text-6xl mb-5">Ray Jiang</span>
-            <span className="block text-5xl">{age}</span>
+
+          <div className={introClasses}>
+            <p>{t("intro")}</p>
+          </div>
+
+          <div className={chartClasses}>
+            <AbilityChart />
           </div>
         </div>
-
-        <div className={introClasses}>
-          <p>{t("intro")}</p>
-        </div>
-
-        <div className={chartClasses}>
-          <AbilityChart />
-        </div>
-      </div>
-    </section>
+      </section>
+    </FadeInOnScroll>
   );
 }
 
