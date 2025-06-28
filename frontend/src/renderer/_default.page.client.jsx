@@ -6,6 +6,7 @@ import { PageContext } from "./pageContext"; // 创建一个 Context 来传递 p
 import { I18nextProvider } from "react-i18next"; // 确保导入 I18nextProvider
 import i18nClient from "../i18n/i18n.client"; // 导入客户端的 i18n 配置
 
+import { BrowserRouter } from "react-router-dom";
 export { render };
 
 async function render(pageContext) {
@@ -20,10 +21,13 @@ async function render(pageContext) {
     document.getElementById("page-view"),
     <PageContext.Provider value={pageContext}>
       <I18nextProvider i18n={i18nClient}>
-        {/* 你的 AlertProvider 和其他顶层 Context Providers */}
-        {/* <AlertProvider> */}
-        <Page />
-        {/* </AlertProvider> */}
+        {/* 在客户端使用 BrowserRouter */}
+        <BrowserRouter>
+          {/* 你的 AlertProvider 和其他顶层 Context Providers */}
+          {/* <AlertProvider> */}
+          <Page />
+          {/* </AlertProvider> */}
+        </BrowserRouter>
       </I18nextProvider>
     </PageContext.Provider>
   );
