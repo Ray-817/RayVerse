@@ -14,6 +14,7 @@ export { render };
 
 async function render(pageContext) {
   const { Page, exports, documentProps, urlOriginal } = pageContext;
+  await i18nServer.init();
 
   const pageHtml = (
     <I18nextProvider i18n={i18nServer}>
@@ -28,7 +29,6 @@ async function render(pageContext) {
     </I18nextProvider>
   );
 
-  await i18nServer.init();
   // 可以从页面组件的 exports 中获取标题等信息
   const title = (documentProps && documentProps.title) || "RAY's World";
   const description =
@@ -43,8 +43,7 @@ async function render(pageContext) {
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta name="description" content="${description}" />
         <title>${title}</title>
-        <link rel="preload" href="/fonts/my-font-bold.woff2" as="font" type="font/woff2" crossorigin>
-        <link rel="preload" href="/fonts/my-font-thin.woff2" as="font" type="font/woff2" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100..900&display=swap" rel="stylesheet"/>
         </head>
       <body>
         <div id="page-view">${dangerouslySkipEscape(pageHtml)}</div>
