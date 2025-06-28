@@ -1,19 +1,31 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
+import prerender from "vite-plugin-prerender";
 import { fileURLToPath } from "url";
 import path from "path";
+import { config } from "@config/appConfig";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react(), tailwindcss()],
+  plugins: [
+    react(),
+    tailwindcss(),
+    prerender({
+      routes: ["/"],
+      staticDir: path.join(__dirname, "dist"), // 输出目录
+      rendererOptions: {
+        renderAfterTime: 500,
+      },
+    }),
+  ],
   server: {
     proxy: {
       "/api/v1": {
-        target: `http://localhost:3030`,
+        target: config.API_BASE_URL,
         changeOrigin: true,
       },
     },
@@ -30,5 +42,8 @@ export default defineConfig({
       "@services": path.resolve(__dirname, "src/services"),
       "@context": path.resolve(__dirname, "src/context"),
     },
+  },
+  build: {
+    assetsInlineLimit: 25 * 1024,
   },
 });

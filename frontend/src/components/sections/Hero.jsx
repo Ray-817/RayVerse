@@ -3,7 +3,7 @@ import clsx from "clsx";
 function Hero() {
   const heroClasses = clsx(
     "relative w-full h-[90vh] bg-no-repeat",
-    "md:bg-[url(/src/assets/bgDesktop.svg)] bg-left",
+    "md:bg-[url(/src/assets/bgDesktop.webp)] bg-left",
     "md:bg-[length:70%_auto] md: bg-[position:center_30%] md:h-[60vh]",
     "lg:h-[75vh]",
     "pb-26 md:pb-30 lg:pb-34 mb-26 md:mb-30 lg:mb-34"
@@ -29,7 +29,7 @@ function Hero() {
   const textContainerClasses = clsx(
     "absolute top-1/2 right-0 transform -translate-y-1/2",
     "sm:top-1/2 right-0 transform -translate-y-[60%]",
-    "pr-8 md:pr-16 lg:pr-24",
+    "pr-16 lg:pr-24",
     "md:mt-10",
     "flex flex-col items-end text-left",
     "w-full sm:w-2/3 lg:w-2/3 xl:w-2/3"
