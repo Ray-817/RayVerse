@@ -22,25 +22,23 @@ This frontend is fully designed and prototyped in Figma:
 ## Project Structure
 
 src/
-├── assets/ _Static files (images, icons, localization files)_
-│ └── locales/ _JSON files for multi-language support (i18n)_
-│
-├── components/
-│ ├── layout/ _App layout components_
-│ ├── sections/ _Page-specific sections_
-│ └── ui/ _Reusable atomic components_
-│
-├── config/ _Centralized app configuration_
-├── context/ _\_Global state_
-├── hooks/ _Custom React hooks_
-├── i18n/ _Internationalization setup_
-├── lib/ _Third-party library wrappers_
-├── pages/ _Route entrypoints_
-│ └── index/ Main SPA entry (rendered by Vite)\_
-├── renderer/ _SSR logic and meta tag rendering_
-├── services/ _API interaction layer_
-├── styles/ _Global stylesheets_
-└── utils/ _Utility functions_
+assets/ _Static files (images, icons, localization files)_
+  locales/ _JSON files for multi-language support (i18n)_
+components/
+  layout/ _App layout components_
+  sections/ _Page-specific sections_
+  ui/ _Reusable atomic components_
+config/ _Centralized app configuration_    
+context/ _\_Global state_  
+hooks/ _Custom React hooks_  
+i18n/ _Internationalization setup_  
+lib/ _Third-party library wrappers_
+pages/ _Route entrypoints_  
+  index/ Main SPA entry (rendered by Vite)\_  
+renderer/ _SSR logic and meta tag rendering_
+services/ _API interaction layer_
+styles/ _Global stylesheets_  
+utils/ _Utility functions_
 
 ## Routing
 
