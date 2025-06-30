@@ -26,23 +26,11 @@ const videoSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    thumbnailUrl: {
-      type: String,
-      required: true,
-    },
-    publishedDate: {
-      type: Date,
-      default: Date.now,
-    },
     likes: {
       type: Number,
       default: 0,
     },
-
-    uploadedAt: {
-      type: Date,
-      default: Date.now,
-    },
+    likedByIPs: { type: [String] },
   },
   {
     timestamps: true,

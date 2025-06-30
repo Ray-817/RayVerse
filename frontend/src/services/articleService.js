@@ -67,15 +67,15 @@ export const getSingleArticleBySlug = async (slug, lang) => {
       const isCacheValid = Date.now() < expiresAt;
 
       if (isCacheValid) {
-        console.log(
-          `[Cache Hit] Using cached article content for slug: ${slug}, lang: ${lang}`
-        );
+        // console.log(
+        //   `[Cache Hit] Using cached article content for slug: ${slug}, lang: ${lang}`
+        // );
         return cachedArticle; // 缓存有效，直接返回
       }
       if (!isCacheValid) {
-        console.log(
-          `[Cache Expired] Cached article content for slug: ${slug}, lang: ${lang} expired.`
-        );
+        // console.log(
+        //   `[Cache Expired] Cached article content for slug: ${slug}, lang: ${lang} expired.`
+        // );
         localStorage.removeItem(cacheKey); // 移除过期缓存
       }
     } catch (e) {
@@ -87,9 +87,9 @@ export const getSingleArticleBySlug = async (slug, lang) => {
 
   // --- 2. 缓存无效或不存在，从网络获取 ---
   try {
-    console.log(
-      `[Network Fetch] Fetching new article content for slug: ${slug}, lang: ${lang}`
-    );
+    // console.log(
+    //   `[Network Fetch] Fetching new article content for slug: ${slug}, lang: ${lang}`
+    // );
     // 使用 api.js 中封装的 fetchData 函数
     const data = await fetchData(
       `${ARTICLE_BASE_ENDPOINT}/slug/${slug}?lang=${lang}`

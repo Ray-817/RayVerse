@@ -1,4 +1,3 @@
-/* eslint-disable require-await */
 // src/renderer/_default.page.client.jsx
 import React from "react";
 import { hydrateRoot } from "react-dom/client";
@@ -16,19 +15,32 @@ async function render(pageContext) {
     await i18nClient.init();
   }
 
-  // React 18 的 hydrateRoot
+  // Hydrate 你的 React 应用到新的 ID 'page-view-content'
+  // 这是为了确保 Loader 和主要内容可以独立处理
   hydrateRoot(
-    document.getElementById("page-view"),
+    document.getElementById("page-view-content"), // <-- 注意这里是新的 ID
     <PageContext.Provider value={pageContext}>
       <I18nextProvider i18n={i18nClient}>
-        {/* 在客户端使用 BrowserRouter */}
         <BrowserRouter>
-          {/* 你的 AlertProvider 和其他顶层 Context Providers */}
-          {/* <AlertProvider> */}
           <Page />
-          {/* </AlertProvider> */}
         </BrowserRouter>
       </I18nextProvider>
     </PageContext.Provider>
   );
+
+  // 在 hydrate 完成后隐藏加载动画
+  if (typeof window !== "undefined") {
+    const loaderWrapper = document.getElementById("loader-wrapper");
+    if (loaderWrapper) {
+      loaderWrapper.classList.add("loader-hidden");
+      // 动画结束后从 DOM 中移除
+      loaderWrapper.addEventListener(
+        "transitionend",
+        () => {
+          loaderWrapper.remove();
+        },
+        { once: true }
+      );
+    }
+  }
 }

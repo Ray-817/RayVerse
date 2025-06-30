@@ -44,16 +44,6 @@ const articleSchema = new mongoose.Schema(
         trim: true,
       },
     },
-    mockContent: {
-      en: {
-        type: String,
-        required: [true, "Article should has content."],
-      },
-      jp: {
-        type: String,
-        required: [true, "Article should has content."],
-      },
-    },
     contentUrl: {
       en: {
         type: String,

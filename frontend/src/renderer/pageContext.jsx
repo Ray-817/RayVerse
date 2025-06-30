@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 // src/renderer/PageContext.jsx
 import React, { useContext } from "react";
 

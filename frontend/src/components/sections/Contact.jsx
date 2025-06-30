@@ -18,12 +18,13 @@ function Contact() {
   return (
     <FadeInOnScroll>
       <section className={sectionClasses} id="contact">
+        <FeedbackForm />
         <div className="flex flex-col font-semibold justify-between items-center">
-          <div className="sm:ml-50">
+          <div className="sm:mr-50">
             <h3 className="text-5xl mb-8">{t("thank1")}</h3>
             <h3 className="text-5xl">{t("thank2")}</h3>
           </div>
-          <div className="mt-15 sm:ml-54">
+          <div className="mt-15 sm:mr-54">
             <ButtonMy
               label={t("myResume")}
               onClick={handleDownload}
@@ -31,7 +32,6 @@ function Contact() {
             />
           </div>
         </div>
-        <FeedbackForm />
       </section>
     </FadeInOnScroll>
   );

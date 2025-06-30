@@ -7,6 +7,7 @@ import * as imageServices from "@services/imageService";
 import { useAlert } from "@hooks/useAlert";
 import Icon from "./Icon";
 import { useTranslation } from "react-i18next";
+import { ModalPortal } from "@components/layout/ModalPortal";
 
 function ImageList() {
   const [images, setImages] = useState([]);
@@ -207,11 +208,8 @@ function ImageList() {
       )}
 
       {/* 模态框渲染条件：只有当 selectedImage 有值时才渲染 */}
-      {selectedImage && ( // 只要 selectedImage 有值，模态框就会被渲染
-        <div
-          className="fixed bg-gray-200/50 inset-0 flex items-center justify-center z-50 p-4"
-          onClick={closeModal}
-        >
+      <ModalPortal isOpen={!!selectedImage} onClose={closeModal}>
+        {selectedImage && ( // 只要 selectedImage 有值，模态框就会被渲染
           <div className="imgContainer" onClick={(e) => e.stopPropagation()}>
             {loadingLargeImage ? (
               // 如果正在加载大图，显示加载动画
@@ -227,18 +225,9 @@ function ImageList() {
                 className="max-w-[90vw] max-h-[85vh] object-contain mx-auto block pt-20 z-60"
               />
             )}
-
-            {/* 关闭按钮 */}
-            <button
-              onClick={closeModal}
-              className="absolute top-[9%] right-2 sm:top-[13%] sm:right-2 p-2 rounded-full hover:bg-white hover:bg-opacity-20 transition-colors duration-200"
-              aria-label="Close"
-            >
-              <Icon name="close" className="w-20 h-20" />
-            </button>
           </div>
-        </div>
-      )}
+        )}
+      </ModalPortal>
     </div>
   );
 }

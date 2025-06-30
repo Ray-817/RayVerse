@@ -9,12 +9,8 @@ const resumeSchema = new mongoose.Schema(
     language: {
       type: String,
       required: true,
-      enum: ["en", "jp"],
+      enum: ["en", "jp", "zhHans"],
       unique: true,
-    },
-    updatedAt: {
-      type: Date,
-      default: Date.now,
     },
   },
   {

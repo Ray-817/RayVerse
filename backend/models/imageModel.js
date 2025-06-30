@@ -27,14 +27,11 @@ const imageSchema = new mongoose.Schema(
       required: true,
       enum: ["baking", "diy", "photograph", "cover"],
     },
-    uploadedAt: {
-      type: Date,
-      default: Date.now,
-    },
     likes: {
       type: Number,
       default: 0,
     },
+    likedByIPs: { type: [String] },
   },
   {
     timestamps: true,

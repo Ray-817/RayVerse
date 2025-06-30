@@ -9,6 +9,7 @@ import clsx from "clsx";
 import ReactMarkdown from "react-markdown"; // 导入 react-markdown
 import remarkGfm from "remark-gfm"; // 导入 remark-gfm
 import { useTranslation } from "react-i18next";
+import { ModalPortal } from "@components/layout/ModalPortal";
 
 import Icon from "./Icon";
 import PaginationMy from "./PaginationMy";
@@ -271,19 +272,8 @@ function ArticleList() {
         )}
       </div>
       <PaginationMy currentPage={currentPage} totalPages={totalPages} />
-
-      {selectedArticle && (
-        <div
-          className="fixed bg-gray-200/50 inset-0 flex items-center justify-center z-50 p-4"
-          onClick={closeModal}
-        >
-          <button
-            onClick={closeModal}
-            className="absolute top-[10%] right-[8%] p-2 rounded-full bg-white hover:bg-gray-100 transition-colors duration-200 z-50 sm:top-[13%] sm:right-[15%]"
-            aria-label="Close"
-          >
-            <Icon name="close" className="w-20 h-20" />{" "}
-          </button>
+      <ModalPortal isOpen={!!selectedArticle} onClose={closeModal}>
+        {selectedArticle && (
           <div
             className="relative rounded-lg max-w-4xl max-h-[75vh] w-[70vw] overflow-y-auto transform scale-95 animate-fade-in-scale sm:max-h-[85vh] sm:mt-20 "
             onClick={(e) => e.stopPropagation()}
@@ -318,8 +308,8 @@ function ArticleList() {
               </div>
             )}
           </div>
-        </div>
-      )}
+        )}
+      </ModalPortal>
     </div>
   );
 }

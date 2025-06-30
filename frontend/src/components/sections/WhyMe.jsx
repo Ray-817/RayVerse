@@ -30,7 +30,7 @@ function WhyMe() {
 
   const introClasses = clsx(
     "rounded-3xl border-2 border-background-dark px-15 py-10",
-    "text-5xl leading-[1.7] text-justify indent-10",
+    "text-5xl leading-[1.7] text-justify indent-3",
     "shadow-xs",
     "md:col-span-2 md:leading-[1.6] md:text-4xl"
   );

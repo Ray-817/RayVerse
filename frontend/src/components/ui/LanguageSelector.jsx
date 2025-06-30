@@ -81,9 +81,6 @@ function LanguageSelector() {
     }
   };
 
-  // 移除或注释掉 window.location.reload(); 这一行，SSR 时会报错
-  // window.location.reload();
-
   const currentLangName =
     languages.find((l) => l.code === currentSelectedLang)?.name || "Language";
 

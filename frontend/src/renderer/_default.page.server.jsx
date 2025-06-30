@@ -7,6 +7,7 @@ import logoUrl from "../../public/favicon.ico"; // 如果你有网站 Logo 等�
 import { I18nextProvider } from "react-i18next"; // 确保导入 I18nextProvider
 import { StaticRouter } from "react-router-dom";
 import i18nServer from "../i18n/i18n.server"; // 导入服务器端的 i18n 配置
+import Loader from "@components/ui/Loader";
 
 export { render };
 // 导出 onBeforeRender 函数，可以用于全局的数据预加载或身份验证
@@ -14,22 +15,26 @@ export { render };
 
 async function render(pageContext) {
   const { Page, exports, documentProps, urlOriginal } = pageContext;
+
   await i18nServer.init();
 
-  const pageHtml = (
+  // 同时渲染你的应用和 Loader 组件
+  // 注意：我们将 Loader 和 Page 放在一起，并都作为 pageHtml 的一部分
+  const pageHtml = ReactDOMServer.renderToString(
     <I18nextProvider i18n={i18nServer}>
-      {/* 使用 StaticRouter 包裹你的应用 */}
-      {/* StaticRouter 需要一个 location 属性，通常是当前页面的 URL */}
       <StaticRouter location={urlOriginal}>
-        {/* 你的 AlertProvider 和其他顶层 Context Providers */}
         {/* <AlertProvider> */}
-        <Page />
+        <Loader /> {/* <-- 在这里渲染 Loader 组件 */}
+        <div id="page-view-content">
+          {" "}
+          {/* <-- 为你的主要内容创建一个新 ID */}
+          <Page />
+        </div>
         {/* </AlertProvider> */}
       </StaticRouter>
     </I18nextProvider>
   );
 
-  // 可以从页面组件的 exports 中获取标题等信息
   const title = (documentProps && documentProps.title) || "RAY's World";
   const description =
     (documentProps && documentProps.description) ||
@@ -44,16 +49,14 @@ async function render(pageContext) {
         <meta name="description" content="${description}" />
         <title>${title}</title>
         <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100..900&display=swap" rel="stylesheet"/>
-        </head>
+      </head>
       <body>
-        <div id="page-view">${dangerouslySkipEscape(pageHtml)}</div>
-        </body>
+        ${dangerouslySkipEscape(pageHtml)}
+      </body>
     </html>`;
 
   return {
     documentHtml,
-    pageContext: {
-      // 可以在这里传递一些数据到客户端
-    },
+    pageContext: {},
   };
 }
