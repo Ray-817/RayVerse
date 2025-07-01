@@ -52,9 +52,3 @@ I used Figma for UI design and page prototype planning, thinking about the layou
 - [ ] Improved the visual effects of the technical stack section
 
 - [ ] Why me section adds crawler quantitative data
-
-## docs to write:
-
-- api.md: backend routes, how to request, props and response form.
-
-- routes.ms: front end structure.
