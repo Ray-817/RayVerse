@@ -6,10 +6,11 @@ import { getArticles, getSingleArticleBySlug } from "@services/articleService";
 import { useAlert } from "@hooks/useAlert";
 import config from "@config/appConfig";
 import clsx from "clsx";
-import ReactMarkdown from "react-markdown"; // 导入 react-markdown
-import remarkGfm from "remark-gfm"; // 导入 remark-gfm
+// import ReactMarkdown from "react-markdown"; // 导入 react-markdown
+// import remarkGfm from "remark-gfm"; // 导入 remark-gfm
 import { useTranslation } from "react-i18next";
 import { ModalPortal } from "@components/layout/ModalPortal";
+import MarkdownRenderer from "@components/ui/MarkdownRenderer";
 
 import Icon from "./Icon";
 import PaginationMy from "./PaginationMy";
@@ -301,9 +302,10 @@ function ArticleList() {
                   </p>
                 </div>
                 <div className="mx-8 my-5 flex flex-col">
-                  <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                  {/* <ReactMarkdown remarkPlugins={[remarkGfm]}>
                     {selectedArticle.content}
-                  </ReactMarkdown>
+                  </ReactMarkdown> */}
+                  <MarkdownRenderer markdown={selectedArticle.content} />
                 </div>
               </div>
             )}
