@@ -2,7 +2,7 @@ const express = require("express");
 const morgan = require("morgan");
 const cors = require("cors");
 const AppError = require("./utils/appError");
-const globalErrorHandler = require("./controller/errorController");
+const globalErrorHandler = require("./controllers/errorController");
 const authorizeAdmin = require("./middlewares/authorizeAdmin");
 
 // ROUTES
