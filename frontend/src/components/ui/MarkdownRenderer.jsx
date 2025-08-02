@@ -8,7 +8,7 @@ export default function MarkdownRenderer({ markdown }) {
 
   return (
     <div
-      className="markdown-body max-w-full text-base"
+      className="markdown-body max-w-full text-xl"
       dangerouslySetInnerHTML={{ __html: html }}
     />
   );

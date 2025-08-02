@@ -1,92 +1,110 @@
+/**
+ * @fileoverview APIFeatures Class: A utility class for
+ * handling common API features like filtering, sorting, and pagination.
+ */
 class APIFeatures {
+  /**
+   * @description Constructs an APIFeatures instance.
+   * @param {object} query - The Mongoose query object.
+   * @param {object} queryString - The Express request query object (req.query).
+   */
   constructor(query, queryString) {
     this.query = query;
     this.queryString = queryString;
-    this.lang = this.queryString.lang || "en"; // 默认语言为英语
+    // Set a default language if not specified in the query.
+    this.lang = this.queryString.lang || "en";
   }
+
+  /**
+   * @description Filters the query based on the request query string.
+   * Excludes pagination, sorting, and field selection fields from the filter.
+   * Supports advanced filtering with operators like gte, gt, lte, lt.
+   * @returns {APIFeatures} The current APIFeatures instance for chaining.
+   */
   filter() {
+    // Create a shallow copy of the query string to avoid modifying the original.
     const queryObj = { ...this.queryString };
+    // Define fields to exclude from filtering.
     const excludeFields = ["page", "sort", "limit", "fields", "lang"];
 
+    // Remove excluded fields from the query object.
     excludeFields.forEach((el) => delete queryObj[el]);
 
-    // const queryToObj = JSON.parse(JSON.stringify([{ ...queryObj }]));
-
+    // Convert the query object to a string and replace operators (e.g., gt) with MongoDB operators ($gt).
     let queryStr = JSON.stringify(queryObj);
     queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
 
+    // Apply the filter to the Mongoose query.
     this.query = this.query.find(JSON.parse(queryStr));
     return this;
   }
 
+  /**
+   * @description Sorts the query results. Defaults to sorting by creation date in descending order.
+   * @returns {APIFeatures} The current APIFeatures instance for chaining.
+   */
   sort() {
     if (this.queryString.sort) {
+      // If a sort field is provided, format it for Mongoose.
       const sortBy = this.queryString.sort.split(",").join(" ");
       this.query = this.query.sort(sortBy);
     } else {
+      // Default sort by `createdAt` in descending order.
       this.query = this.query.sort("-createdAt");
     }
     return this;
   }
 
+  /**
+   * @description Limits the fields to be returned in the query results.
+   * Always includes `_id` and `slug`.
+   * @returns {APIFeatures} The current APIFeatures instance for chaining.
+   */
   limitFields() {
-    // 总是包含 _id 和 slug
-    let finalFieldsSet = new Set(["_id", "slug"]); // **修改点 1: 总是包含 slug**
+    // Always include `_id` and `slug` in the final fields set.
+    let finalFieldsSet = new Set(["_id", "slug"]);
 
+    // If a list of fields is provided, parse and process it.
     const requestedFields = this.queryString.fields
       ? this.queryString.fields.split(",").map((f) => f.trim())
       : [];
 
     if (requestedFields.length === 0) {
-      // 如果前端没有明确指定字段，则返回默认的语言特定字段 + categories
+      // If no fields are specified, select default language-specific fields and categories.
       finalFieldsSet.add(`title.${this.lang}`);
       finalFieldsSet.add(`summary.${this.lang}`);
       finalFieldsSet.add("categories");
     } else {
-      // 如果前端指定了字段，则遍历这些字段
+      // If fields are specified, add them to the set, handling language-specific fields.
       requestedFields.forEach((field) => {
-        // 处理排除字段（以 '-' 开头）
-        if (field.startsWith("-")) {
-          // 如果是排除字段，我们通常不将其添加到 finalFieldsSet
-          // Mongoose 的 .select() 可以处理排除逻辑
-          // 确保你传入 select 的字符串是正确的格式（正向选择或负向排除）
-          // 注意：混合正负选择通常会导致意外行为，Mongoose 推荐只用一种
-          // 鉴于你的需求，我们倾向于正向选择并确保必含字段
+        if (field === "title") {
+          finalFieldsSet.add(`title.${this.lang}`);
+        } else if (field === "summary") {
+          finalFieldsSet.add(`summary.${this.lang}`);
+        } else if (field === "categories") {
+          finalFieldsSet.add("categories");
         } else {
-          // 处理包含字段
-          if (field === "title") {
-            finalFieldsSet.add(`title.${this.lang}`);
-          } else if (field === "summary") {
-            finalFieldsSet.add(`summary.${this.lang}`);
-          } else if (field === "categories") {
-            finalFieldsSet.add("categories");
-          } else {
-            finalFieldsSet.add(field); // 添加其他非特殊处理的字段
-          }
+          finalFieldsSet.add(field);
         }
       });
     }
 
-    // 处理用户请求排除某些字段的情况
-    // 如果你的前端没有发送 '-field' 这样的请求，下面的逻辑可以简化
-    let fieldsToSelectArray = Array.from(finalFieldsSet);
-    let finalSelectString = fieldsToSelectArray.join(" ");
-
-    // 如果前端同时发送了排除字段（通常不推荐和包含字段混用）
-    // 或者你想要在没有明确指定 fields 时，有一些默认排除的字段（比如 __v）
-    // 你可以在这里添加类似 `this.query.select('-__v')`
-    // 但鉴于你的代码结构，最简单的是确保 `finalFieldsSet` 包含了所有需要的正面选择。
-
+    // Convert the set of fields to a space-separated string and apply to the query.
+    let finalSelectString = Array.from(finalFieldsSet).join(" ");
     this.query = this.query.select(finalSelectString);
     return this;
   }
 
+  /**
+   * @description Paginates the query results based on page and limit parameters.
+   * @returns {APIFeatures} The current APIFeatures instance for chaining.
+   */
   paginate() {
     const page = this.queryString.page * 1 || 1;
-    const limit = this.queryString.limit * 1 || 4;
+    const limit = this.queryString.limit * 1 || process.env.PAGINATION_PAGE;
     const skip = (page - 1) * limit;
-    this.query = this.query.skip(skip).limit(limit);
 
+    this.query = this.query.skip(skip).limit(limit);
     return this;
   }
 }

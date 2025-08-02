@@ -21,40 +21,25 @@ This frontend is fully designed and prototyped in Figma:
 
 ## Project Structure
 
+````text
 src/
-assets/ _Static files (images, icons, localization files)_
-
-    locales/ _JSON files for multi-language support (i18n)_
-
-components/
-
-    layout/ _App layout components_
-
-    sections/ _Page-specific sections_
-
-    ui/ _Reusable atomic components_
-
-config/ _Centralized app configuration_
-
-context/ _\_Global state_
-
-hooks/ _Custom React hooks_
-
-i18n/ _Internationalization setup_
-
-lib/ _Third-party library wrappers_
-
-pages/ _Route entrypoints_
-
-    index/ Main SPA entry (rendered by Vite)\_
-
-renderer/ _SSR logic and meta tag rendering_
-
-services/ _API interaction layer_
-
-styles/ _Global stylesheets_
-
-utils/ _Utility functions_
+├── assets/                       # Static files (images, icons, localization files)
+│   └── locales/                  # JSON files for multi-language support (i18n)
+├── components/
+│   ├── layout/                   # App layout components
+│   ├── sections/                 # Page-specific sections
+│   └── ui/                       # Reusable atomic components
+├── config/                       # Centralized app configuration
+├── context/                      # Global state
+├── hooks/                        # Custom React hooks
+├── i18n/                         # Internationalization setup
+├── lib/                          # Third-party library wrappers
+├── pages/                        # Route entrypoints
+│   └── index/                    # Main SPA entry (rendered by Vite)
+├── renderer/                     # SSR logic and meta tag rendering
+├── services/                     # API interaction layer
+├── styles/                       # Global stylesheets
+└── utils/                        # Utility functions
 
 ## Routing
 
@@ -89,7 +74,7 @@ Fetch/Promise is used for all HTTP requests. API base URL is set via `.env`:
 
 ```env
 VITE_API_BASE_URL=https://rayverse.onrender.com/api/v1
-```
+````
 
 ## State & User Experience
 

@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Article Controllers: Handling all article-related API requests.
+ */
+
 const Article = require("../models/articleModel");
 const AppError = require("../utils/appError");
 const catchAsync = require("../utils/catchAsync");
@@ -5,47 +9,65 @@ const APIFeatures = require("../utils/apiFeatures");
 const { getR2PresignedUrl } = require("../utils/r2Client");
 const { r2UrlAccessLimiter } = require("../middlewares/rateLimiter");
 
+/**
+ * @description Get all Articles: Supports paging, filtering, sorting, and field selection.
+ * @route GET /api/v1/articles
+ * @param {object} req - Express request object.
+ * @param {object} res - Express response object.
+ * @param {Function} next - The next middleware function.
+ * @returns {object} A JSON response containing the article data and pagination info.
+ */
 exports.getAllArticles = catchAsync(async (req, res) => {
-  // 1. 用于计算总文章数 (不应用分页和字段选择)
-  // 这里我们只需要过滤，因为 countDocuments 只需要知道筛选条件
+  // 1. First, calculate the total number of articles before applying pagination.
+  //    This query will only be filtered, but not sorted or paginated.
   const totalArticlesQuery = new APIFeatures(
     Article.find(),
     req.query
   ).filter();
   const totalArticles = await totalArticlesQuery.query.countDocuments();
 
-  // 2. 用于获取实际的文章数据 (应用所有查询特性)
+  // 2. Next, fetch the actual article data with all query features applied.
   const features = new APIFeatures(Article.find(), req.query)
-    .filter() // 应用过滤条件 (categories)
-    .sort() // 应用排序
-    .limitFields() // 应用字段选择 (根据语言选择 title.<lang> 和 summary.<lang>，以及 categories)
-    .paginate(); // 应用分页
+    .filter() // Apply filtering (e.g., by categories)
+    .sort() // Apply sorting
+    .limitFields() // Select specific fields based on the query (e.g., title.<lang>, summary.<lang>)
+    .paginate(); // Apply pagination
 
-  // 执行查询，获取文章数据
+  // Execute the query to get the articles for the current page.
   const articles = await features.query;
 
-  // 根据当前页和每页限制计算总页数
+  // 3. Handle cases where no articles are found.
+  if (!articles) {
+    return next(new AppError("Articles Not found!"), 404);
+  }
+  // 4. Calculate pagination details for the response.
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || process.env.PAGINATION_PAGE;
   const totalPages = Math.ceil(totalArticles / limit);
 
-  if (!articles) {
-    return next(new AppError("Articles Not found!"), 404);
-  }
-
-  // 发送成功响应
+  // Send a successful response with the data and pagination info.
   res.status(200).json({
     status: "success",
-    results: articles.length, // 返回当前页的文章数量
-    articles, // 文章数据
-    currentPage: page, // 当前页码
-    totalPages, // 总页数
-    totalArticles, // 总文章数
+    results: articles.length,
+    articles,
+    currentPage: page,
+    totalPages,
+    totalArticles,
   });
 });
 
+/**
+ * @description Create a new article.
+ * @route POST /api/v1/articles
+ * @param {object} req - Express request object.
+ * @param {object} res - Express response object.
+ * @returns {object} JSON response with the newly created article.
+ */
 exports.createArticle = catchAsync(async (req, res) => {
+  // Create a new article in the database using data from the request body.
   const newArticle = await Article.create(req.body);
+
+  // Send a success response with a 201 status code and the new article data.
   res.status(201).json({
     status: "success",
     data: {
@@ -54,10 +76,20 @@ exports.createArticle = catchAsync(async (req, res) => {
   });
 });
 
+/**
+ * @description Get a single article by its URL slug. Fetches metadata from the database and content from R2 storage.
+ * @route GET /api/v1/articles/slug/:slug
+ * @param {object} req - Express request object.
+ * @param {object} res - Express response object.
+ * @param {Function} next - The next middleware function.
+ * @param {string} slug - The URL slug of the article.
+ * @param {string} lang - The language of the article content.
+ * @returns {object} A JSON response containing the formatted article data with its content.
+ */
 exports.getSingleArticleBySlug = [
   r2UrlAccessLimiter,
   catchAsync(async (req, res, next) => {
-    // 确保 next 参数存在
+    // 1. Validate required parameters.
     const { slug } = req.params;
     const { lang } = req.query;
 
@@ -65,22 +97,18 @@ exports.getSingleArticleBySlug = [
       return next(new AppError("Language parameter (lang) is required.", 400));
     }
 
+    // 2. Find the article in the database using the provided slug.
     const article = await Article.findOne({ slug: slug });
 
+    // Handle case where no article is found.
     if (!article) {
       return next(new AppError(`Article with slug "${slug}" not found.`, 404));
     }
 
+    // 3. Get the R2 key for the specific language and validate its existence.
     const r2KeyForMarkdown = article.contentUrl
       ? article.contentUrl[lang]
       : undefined;
-
-    console.log("lang ===>", lang, typeof lang);
-    console.log(
-      "Object.keys(contentUrl) ===>",
-      Object.keys(article.contentUrl)
-    );
-    console.log("是否匹配 zhHans:", lang === "zhHans");
 
     if (!r2KeyForMarkdown) {
       return next(
@@ -91,15 +119,15 @@ exports.getSingleArticleBySlug = [
       );
     }
 
-    // 这里是关键修改：后端现在直接从 R2 获取 Markdown 文本
+    // 4. Generate a pre-signed URL and fetch the Markdown content from R2.
     const markdownUrl = await getR2PresignedUrl(
       r2KeyForMarkdown,
       process.env.EXPIRED_TIME
     );
     const markdownRes = await fetch(markdownUrl);
 
+    // Handle cases where fetching from R2 fails.
     if (!markdownRes.ok) {
-      // 如果后端从R2获取失败，这里可以返回错误
       console.error(
         `Backend failed to fetch markdown from R2: ${markdownRes.statusText}`
       );
@@ -109,6 +137,7 @@ exports.getSingleArticleBySlug = [
     }
     const markdownContent = await markdownRes.text();
 
+    // 5. Format the final article object for the response.
     const formattedArticle = {
       id: article._id,
       slug: article.slug,
@@ -123,6 +152,7 @@ exports.getSingleArticleBySlug = [
       likes: article.likes,
     };
 
+    // 6. Send the successful response.
     res.status(200).json(formattedArticle);
   }),
 ];

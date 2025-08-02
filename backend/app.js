@@ -1,3 +1,10 @@
+/**
+ * @fileoverview Main Express Application Entry Point.
+ * @description This file sets up the Express application, configures middleware, defines API routes,
+ * and handles global error management.
+ * @author Ray Jiang
+ * @version 1.0.1
+ */
 const express = require("express");
 const morgan = require("morgan");
 const cors = require("cors");
@@ -5,56 +12,62 @@ const AppError = require("./utils/appError");
 const globalErrorHandler = require("./controllers/errorController");
 const authorizeAdmin = require("./middlewares/authorizeAdmin");
 
-// ROUTES
+// ROUTE IMPORTS
 const resumeRouter = require("./routes/resumeRoutes");
 const articleRouter = require("./routes/articleRoutes");
 const imageRouter = require("./routes/imageRoutes");
 const videoRouter = require("./routes/videoRoutes");
 
+// Initialize the Express app.
 const app = express();
 
-// MIDDLEWARE
+// --- GLOBAL MIDDLEWARE ---
+// 1. Logging: Conditionally use different logging formats based on the environment.
 if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
   console.log("Running in development mode");
 } else if (process.env.NODE_ENV === "production") {
-  app.use(morgan("combined")); // 或 'tiny'
+  app.use(morgan("combined"));
   console.log("Running in production mode");
 }
 
+// 2. CORS Configuration: Allows requests from specific origins.
 const allowedOrigins =
   process.env.NODE_ENV === "production" ? process.env.FRONTEND_URL : "*";
 
-// **CORS 配置 (非常重要!)**
-// 允许前端开发服务器的源访问你的后端
-// 在开发阶段，允许来自 Vite 开发服务器的请求
 const corsOptions = {
-  origin: allowedOrigins, // 替换为你的 Vite 开发服务器地址
+  origin: allowedOrigins,
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-  credentials: true, // 如果你需要发送 cookies 或授权头
+  credentials: true, // Allow cookies and authorization headers to be sent.
   optionsSuccessStatus: 204,
 };
-
 app.use(cors(corsOptions));
 
+// 3. Body Parser: Parses incoming JSON requests.
 app.use(express.json());
 
-// set root URL
+// --- ROUTES ---
+// Root URL for a health check or a simple welcome message.
 app.get("/", (req, res) => {
   res
     .status(200)
     .json({ message: "Hello from the Ray Verse API 0.0", app: "RayVerse" });
 });
 
+// Define the API prefix from environment variables.
 const apiPrefix = process.env.API_PREFIX;
 
+// All routes after this middleware require admin authorization for non-GET requests.
 app.use(`${apiPrefix}`, authorizeAdmin);
 
+// Mount the routers for different API endpoints.
 app.use(`${apiPrefix}/resumes`, resumeRouter);
 app.use(`${apiPrefix}/articles`, articleRouter);
 app.use(`${apiPrefix}/images`, imageRouter);
 app.use(`${apiPrefix}/videos`, videoRouter);
 
+// --- ERROR HANDLING ---
+// Handle all unhandled routes (404 Not Found).
 app.all(/(.*)/, (req, res, next) => {
   const err = new AppError(
     `Cant's find ${req.originalUrl} on this server!`,
@@ -63,6 +76,8 @@ app.all(/(.*)/, (req, res, next) => {
   next(err);
 });
 
+// Global error handling middleware.
 app.use(globalErrorHandler);
 
+// Export the app instance for use by the server file.
 module.exports = app;

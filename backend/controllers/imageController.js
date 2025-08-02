@@ -1,28 +1,38 @@
+/**
+ * @fileoverview Image Controllers: Handling all image-related API requests.
+ */
 const Image = require("../models/imageModel");
 const catchAsync = require("../utils/catchAsync");
 const AppError = require("../utils/appError");
 const { getR2PresignedUrl } = require("../utils/r2Client");
 const { r2UrlAccessLimiter } = require("../middlewares/rateLimiter");
 
+/**
+ * @description Get all photograph thumbnails.
+ * @route GET /api/v1/images/thumbnails
+ * @param {object} req - Express request object.
+ * @param {object} res - Express response object.
+ * @param {Function} next - The next middleware function.
+ * @returns {object} A JSON array of formatted thumbnail data.
+ */
 exports.getAllThumbnails = [
-  r2UrlAccessLimiter, // 应用频率限制中间件
+  r2UrlAccessLimiter, // Apply rate limiting middleware.
   catchAsync(async (req, res, next) => {
-    // 假设你只获取 category 为 'photograph' 的图片作为缩略图展示
+    // 1. Find all images with the category "photograph".
     const images = await Image.find({ category: "photograph" });
 
-    // 如果没有找到任何图片，返回 404
+    // Handle case where no images are found.
     if (!images || images.length === 0) {
-      // 更准确的错误信息
       return next(new AppError("No thumbnail images found.", 404));
     }
 
-    // 使用 Promise.all 并行生成所有缩略图的预签名 URL
+    // 2. Concurrently generate pre-signed URLs for each thumbnail using Promise.all.
     const formattedImages = await Promise.all(
       images.map(async (image) => {
-        // 确保 image.thumbnailUrl 是 R2 对象的 key (文件名)
+        // Validate if the thumbnailUrl key exists before generating a URL.
         if (!image.thumbnailUrl) {
           console.warn(`Image ID ${image._id} missing thumbnailUrl key.`);
-          return null; // 或者跳过，或者返回一个默认图片URL
+          return null; // Return null for invalid images.
         }
 
         const thumbnailUrl = await getR2PresignedUrl(
@@ -34,21 +44,31 @@ exports.getAllThumbnails = [
           id: image._id,
           slug: image.slug,
           description: image.description,
-          thumbnailUrl: thumbnailUrl, // 现在是完整的预签名 URL
+          thumbnailUrl: thumbnailUrl, // The full pre-signed URL.
         };
       })
     );
 
-    // 过滤掉因为缺少 thumbnailUrl 而返回 null 的项（如果选择了这种处理方式）
+    // 3. Filter out any images that were skipped due to missing thumbnail URLs.
     const validFormattedImages = formattedImages.filter((img) => img !== null);
 
-    // 成功获取数据，状态码 200 OK
+    // Send a success response with a 200 status code and the formatted image data.
     res.status(200).json(validFormattedImages);
   }),
 ];
 
+/**
+ * @description Create a new image record in the database.
+ * @route POST /api/v1/images
+ * @param {object} req - Express request object.
+ * @param {object} res - Express response object.
+ * @returns {object} JSON response with the newly created image record.
+ */
 exports.createImage = catchAsync(async (req, res) => {
+  // Create a new image in the database using data from the request body.
   const newImage = await Image.create(req.body);
+
+  // Send a success response with a 201 status code and the new image data.
   res.status(201).json({
     status: "success",
     data: {
@@ -57,32 +77,44 @@ exports.createImage = catchAsync(async (req, res) => {
   });
 });
 
+/**
+ * @description Get a single image by its URL slug.
+ * @route GET /api/v1/images/slug/:slug
+ * @param {object} req - Express request object.
+ * @param {object} res - Express response object.
+ * @param {Function} next - The next middleware function.
+ * @returns {object} A JSON response containing the formatted image data with its content.
+ */
 exports.getSingleImageBySlug = [
   r2UrlAccessLimiter,
   catchAsync(async (req, res, next) => {
-    // 确保 next 参数传入
+    // 1. Get the slug from request parameters.
     const { slug } = req.params;
 
+    // 2. Find the image in the database using the slug.
     const image = await Image.findOne({ slug: slug });
 
+    // Handle case where no image is found.
     if (!image) {
       return next(new AppError(`Image with slug "${slug}" not found.`, 404));
     }
 
-    // 假设 image.imageUrl 存储高清图的 R2 key
+    // 3. Generate a pre-signed URL for the high-resolution image from R2.
     const imageUrl = await getR2PresignedUrl(
       image.imageUrl,
       process.env.EXPIREDD_TIME
     );
 
+    // 4. Format the final image object for the response.
     const formattedImage = {
       id: image._id,
       title: image.title,
       slug: image.slug,
       description: image.description,
-      imageUrl: imageUrl,
+      imageUrl: imageUrl, // The full pre-signed URL.
     };
 
+    // 5. Send the successful response.
     res.status(200).json(formattedImage);
   }),
 ];

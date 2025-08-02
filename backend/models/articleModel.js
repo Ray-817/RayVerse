@@ -1,15 +1,23 @@
+/**
+ * @fileoverview Article Model: Defines the schema and validation for article documents.
+ * @description This schema includes multilingual fields, content URL validation, and automatic slug generation.
+ */
 const mongoose = require("mongoose");
 const slugify = require("slugify");
-
 const validator = require("validator");
 
+/**
+ * @description Defines the Mongoose schema for an Article.
+ */
 const articleSchema = new mongoose.Schema(
   {
+    // The unique URL slug for the article, generated from the English title.
     slug: {
       type: String,
       unique: true,
       trim: true,
     },
+    // Multilingual titles for the article.
     title: {
       en: {
         type: String,
@@ -27,6 +35,7 @@ const articleSchema = new mongoose.Schema(
         trim: true,
       },
     },
+    // Multilingual summaries for the article.
     summary: {
       en: {
         type: String,
@@ -44,56 +53,58 @@ const articleSchema = new mongoose.Schema(
         trim: true,
       },
     },
+    // Multilingual R2 object keys for the article's Markdown content.
     contentUrl: {
       en: {
         type: String,
         required: [true, "Article should has URL."],
         trim: true,
+        // Validate that the provided string is a valid URL format.
+        validate: [validator.isURL, "Content URL must be a valid URL."],
       },
       jp: {
         type: String,
         required: [true, "Article should has URL."],
         trim: true,
+        validate: [validator.isURL, "Content URL must be a valid URL."],
       },
       zhHans: {
         type: String,
         required: [true, "Article should has URL."],
         trim: true,
+        validate: [validator.isURL, "Content URL must be a valid URL."],
       },
     },
+    // The timestamp when the article was published.
     publishedAt: {
       type: Date,
       default: Date.now,
     },
+    // A flag to control the article's visibility.
     visible: { type: Boolean, default: true },
+    // An array of categories for the article, with a predefined set of values.
     categories: {
       type: [String],
       required: [true, "Article should has category."],
       enum: ["technology", "art", "poetry", "life"],
     },
+    // The number of likes the article has received.
     likes: {
       type: Number,
       default: 0,
     },
+    // An array to store IP addresses that have liked the article to prevent duplicate likes.
     likedByIPs: { type: [String] },
   },
   { timestamps: true }
 );
 
-// 在 slug 字段上创建索引以提高查询性能
-// articleSchema.index({ slug: 1 });
-// 在 language 和 categories 字段上创建复合索引以提高过滤性能
-// articleSchema.index({ language: 1, categories: 1 });
-
-// adding slug to the model
+// Pre-save middleware to automatically generate a URL slug from the English title.
+// The slug is derived from the part of the title before the first colon, if present.
 articleSchema.pre("save", function (next) {
   this.slug = slugify(this.title.en.split(":")[0].trim(), { lower: true });
-
-  // if (!this.slug || this.isModified("title.en")) {
-  //   const baseTitle = this.title.en.split(":")[0].trim();
-  //   this.slug = slugify(baseTitle, { lower: true });
-  // }
   next();
 });
 
+// Create and export the Mongoose model based on the schema.
 module.exports = mongoose.model("Article", articleSchema);

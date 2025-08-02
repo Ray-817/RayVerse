@@ -47,8 +47,6 @@ I used Figma for UI design and page prototype planning, thinking about the layou
 
 - [ ] Use cookies and privacy policy to achieve Like feature
 
-- [ ] Add animation effect to the Hero background image as it scrolls in
-
-- [ ] Improved the visual effects of the technical stack section
+- [ ] Add more animation effects to guide user behavior
 
 - [ ] Why me section adds crawler quantitative data

@@ -1,36 +1,52 @@
+/**
+ * @fileoverview Image Model: Defines the schema and validation for image documents.
+ * @description This schema includes fields for image metadata, URL validation, and automatic slug generation.
+ */
 const mongoose = require("mongoose");
 const slugify = require("slugify");
-
 const validator = require("validator");
 
+/**
+ * @description Defines the Mongoose schema for an Image.
+ */
 const imageSchema = new mongoose.Schema(
   {
-    description: {
-      type: String,
-      trim: true,
-    },
+    // The unique URL slug for the image, generated from its category and a timestamp.
     slug: {
       type: String,
       unique: true,
       trim: true,
     },
+    // A brief description of the image.
+    description: {
+      type: String,
+      trim: true,
+    },
+    // The R2 object key for the high-resolution image file.
     imageUrl: {
       type: String,
-      required: true,
+      required: [true, "Image should have a URL."],
+      // Validate that the provided string is a valid URL format.
+      validate: [validator.isURL, "Image URL must be a valid URL."],
     },
+    // The R2 object key for the thumbnail image file.
     thumbnailUrl: {
       type: String,
-      required: true,
+      required: [true, "Image should have a thumbnail URL."],
+      validate: [validator.isURL, "Thumbnail URL must be a valid URL."],
     },
+    // The category of the image, with a predefined set of values.
     category: {
       type: String,
-      required: true,
-      enum: ["baking", "diy", "photograph", "cover"],
+      required: [true, "Image should have a category."],
+      enum: ["photograph", "cover"],
     },
+    // The number of likes the image has received.
     likes: {
       type: Number,
       default: 0,
     },
+    // An array to store IP addresses that have liked the image to prevent duplicate likes.
     likedByIPs: { type: [String] },
   },
   {
@@ -38,16 +54,16 @@ const imageSchema = new mongoose.Schema(
   }
 );
 
-// 在 category 字段上创建索引
-// imageSchema.index({ category: 1 });
-// adding slug to the model
-
+// Pre-save middleware to automatically generate a unique slug.
+// The slug is generated from the category and a timestamp, ensuring uniqueness.
 imageSchema.pre("save", function (next) {
-  if (this.isModified("title") || this.isNew) {
+  // Generate the slug only if the category is new or has been modified.
+  if (this.isModified("category") || this.isNew) {
     const baseSlug = slugify(this.category, { lower: true, strict: true });
     this.slug = `${baseSlug}-${Date.now()}`;
   }
   next();
 });
 
+// Create and export the Mongoose model based on the schema.
 module.exports = mongoose.model("Image", imageSchema);

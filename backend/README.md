@@ -19,21 +19,15 @@ This is the backend service for my personal portfolio SPA. It provides RESTful A
 
 This project follows the **MVC** (Model-View-Controller) pattern using Express.js. All backend API endpoints are structured for clarity, scalability, and separation of concerns.
 
+````text
 backend/
-
-controllers _Define request handlers for each route (business logic)_
-
-middlewares _Custom middleware functions_
-
-models _Mongoose schemas or database models_
-
-routes _API route definitions and route-level middleware_
-
-utils/ _Utility functions_
-
-app.js _Main Express app configuration (middleware, routes, etc.)_
-
-server.js _Entry point: starts the server and connects to the database_
+├── controllers/    # Defines request handlers for each route (business logic)
+├── middlewares/    # Custom middleware functions
+├── models/         # Mongoose schemas or database models
+├── routes/         # API route definitions and route-level middleware
+├── utils/          # Utility functions
+├── app.js          # Main Express app configuration (middleware, routes, etc.)
+└── server.js       # Entry point: starts the server and connects to the database
 
 ## API Endpoints
 
@@ -93,7 +87,7 @@ Protected routes (`POST`, `PUT`, `DELETE`, etc.) will return `401` Unauthorized 
   like: Number,
   likedByIPs: String Array
 }
-```
+````
 
 ## Cloudflare R2 Integration
 

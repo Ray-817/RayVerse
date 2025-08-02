@@ -12,7 +12,7 @@ import {
   DropdownMenuItem,
 } from "@components/ui/dropdown-menu";
 
-import Icon from "@components/ui/Icon"; // 注意：如果你有这个别名，确保 Vite 配置正确
+import Icon from "@components/ui/Icon";
 import config from "../../config/appConfig";
 
 function LanguageSelector() {
