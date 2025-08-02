@@ -40,6 +40,7 @@ src/
 ├── services/                     # API interaction layer
 ├── styles/                       # Global stylesheets
 └── utils/                        # Utility functions
+````
 
 ## Routing
 
