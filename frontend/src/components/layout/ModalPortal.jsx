@@ -60,7 +60,13 @@ const ModalPortal = ({ children, isOpen, onClose }) => {
       onClick={onClose}
       style={{ zIndex: 30 }}
     >
-      <div className="relative" onClick={(e) => e.stopPropagation()}>
+      <div
+        // 默认情况下（移动端）宽度为 w-full
+        // 在中等屏幕（md）及以上，最大宽度限制为 md:max-w-3xl
+        // 这样电脑端就不会是全宽了
+        className="relative w-full top-[15%] h-[60vh] md:w-auto md:h-auto md:max-w-3xl"
+        onClick={(e) => e.stopPropagation()}
+      >
         {children}
       </div>
       <button
