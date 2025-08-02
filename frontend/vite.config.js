@@ -1,6 +1,8 @@
+/* eslint-disable no-undef */
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
+import typography from "@tailwindcss/typography"; // 导入插件
 import ssr from "vite-plugin-ssr/plugin";
 import { fileURLToPath } from "url";
 import path from "path";
@@ -8,13 +10,13 @@ import path from "path";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// https://vite.dev/config/
 export default defineConfig({
   plugins: [
     react(),
-    tailwindcss(),
+    tailwindcss({
+      plugins: [typography],
+    }),
     ssr({
-      // 启用预渲染
       prerender: true,
       pageFiles: {
         paths: path.join(__dirname, "src", "pages"),

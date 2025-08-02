@@ -89,9 +89,9 @@ function LanguageSelector() {
       <DropdownMenuTrigger asChild>
         <Button
           variant="outline"
-          className="text-4xl md:text-3xl px-4 py-8 bg-background-light border-0"
+          className="text-6xl md:text-3xl px-4 py-8 bg-background-light border-0"
         >
-          <Icon name="globe" className="size-9 fill-logo" />
+          <Icon name="globe" className="size-12 fill-logo" />
           {currentLangName}
         </Button>
       </DropdownMenuTrigger>

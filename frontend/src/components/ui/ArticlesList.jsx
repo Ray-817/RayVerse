@@ -302,9 +302,6 @@ function ArticleList() {
                   </p>
                 </div>
                 <div className="mx-8 my-5 flex flex-col">
-                  {/* <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                    {selectedArticle.content}
-                  </ReactMarkdown> */}
                   <MarkdownRenderer markdown={selectedArticle.content} />
                 </div>
               </div>

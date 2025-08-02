@@ -21,17 +21,11 @@ const videoRouter = require("./routes/videoRoutes");
 // Initialize the Express app.
 const app = express();
 
-// --- GLOBAL MIDDLEWARE ---
-// 1. Logging: Conditionally use different logging formats based on the environment.
-if (process.env.NODE_ENV === "development") {
-  app.use(morgan("dev"));
-  console.log("Running in development mode");
-} else if (process.env.NODE_ENV === "production") {
-  app.use(morgan("combined"));
-  console.log("Running in production mode");
-}
+//Trust the first-level agent
+app.set("trust proxy", 1);
 
-// 2. CORS Configuration: Allows requests from specific origins.
+// --- GLOBAL MIDDLEWARE ---
+// 1. CORS Configuration: Allows requests from specific origins.
 const allowedOrigins =
   process.env.NODE_ENV === "production" ? process.env.FRONTEND_URL : "*";
 
@@ -42,6 +36,15 @@ const corsOptions = {
   optionsSuccessStatus: 204,
 };
 app.use(cors(corsOptions));
+
+// 2. Logging: Conditionally use different logging formats based on the environment.
+if (process.env.NODE_ENV === "development") {
+  app.use(morgan("dev"));
+  console.log("Running in development mode");
+} else if (process.env.NODE_ENV === "production") {
+  app.use(morgan("combined"));
+  console.log("Running in production mode");
+}
 
 // 3. Body Parser: Parses incoming JSON requests.
 app.use(express.json());
