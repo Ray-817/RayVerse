@@ -2,6 +2,7 @@ import { useTranslation } from "react-i18next";
 import ImageList from "@components/ui/ImageList";
 import { VideoCarousel } from "@components/ui/VideoCarousel";
 import FadeInOnScroll from "@components/layout/FadeInOnScroll";
+import "../../styles/markdown.css";
 
 function HobbiesGallery() {
   const { t } = useTranslation();

@@ -52,7 +52,7 @@ function AbilityChart() {
         setCurrentFontSize(16);
       } else {
         // default for smaller screens
-        setCurrentFontSize(12);
+        setCurrentFontSize(15);
       }
     };
 
@@ -69,7 +69,7 @@ function AbilityChart() {
     <ResponsiveContainer width="100%" height="100%">
       <RadarChart
         data={data}
-        margin={{ top: 20, right: 30, bottom: 20, left: 30 }}
+        margin={{ top: 10, right: 20, bottom: 10, left: 20 }}
       >
         <PolarGrid stroke="#dddddd" />
         <PolarAngleAxis
@@ -82,7 +82,7 @@ function AbilityChart() {
           dataKey="score"
           stroke="none"
           fill="#ffd43b"
-          fillOpacity={0.6}
+          fillOpacity={0.5}
         />
       </RadarChart>
     </ResponsiveContainer>

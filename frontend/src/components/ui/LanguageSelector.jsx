@@ -89,9 +89,9 @@ function LanguageSelector() {
       <DropdownMenuTrigger asChild>
         <Button
           variant="outline"
-          className="text-6xl md:text-3xl px-4 py-8 bg-background-light border-0"
+          className="text-6xl md:text-4xl px-4 py-8 bg-background-light border-0"
         >
-          <Icon name="globe" className="size-24 fill-logo" />
+          <Icon name="globe" className="size-18 fill-logo md:size-10" />
           {currentLangName}
         </Button>
       </DropdownMenuTrigger>
@@ -102,7 +102,7 @@ function LanguageSelector() {
             key={language.code}
             onSelect={() => changeLanguage(language.code)}
             className={`
-              text-6xl md:text-3xl mx-2 my-3
+              text-6xl md:text-4xl mx-2 my-3
               ${
                 language.code === currentSelectedLang
                   ? "font-semibold text-text-my"

@@ -301,7 +301,7 @@ function ArticleList() {
                     )}
                   </p>
                 </div>
-                <div className="mx-8 my-5 flex flex-col">
+                <div className="flex flex-col mx-auto px-4 py-8 md:px-8 max-w-7xl">
                   <MarkdownRenderer markdown={selectedArticle.content} />
                 </div>
               </div>

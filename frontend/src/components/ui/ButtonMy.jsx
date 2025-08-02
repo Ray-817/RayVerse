@@ -27,7 +27,7 @@ function ButtonMy({
   });
   // Define sytle classes for icon and label
   const iconClasses = clsx("border-primary-my", "border-0.5");
-  const labelClasses = clsx("text-6xl", "md:text-4xl", "mx-2 my-3");
+  const labelClasses = clsx("text-6xl", "md:text-4xl", "mx-2 my-7 md:my-3");
 
   return (
     <button

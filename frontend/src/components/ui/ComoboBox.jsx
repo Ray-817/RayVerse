@@ -60,7 +60,7 @@ function Combobox({ value, onValueChange }) {
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="justify-between min-w-[100px] text-4xl h-auto py-3 rounded-full sm:text-6xl bg-background-light"
+          className="justify-between min-w-[100px] text-6xl h-auto py-4 rounded-full sm:text-6xl bg-background-light"
         >
           {/* 这里直接使用从父组件接收的 value prop */}
           {value
@@ -88,7 +88,7 @@ function Combobox({ value, onValueChange }) {
                     onValueChange(currentValue);
                     setOpen(false); // 关闭 Popover
                   }}
-                  className="text-2xl sm:text-3xl py-4 px-3"
+                  className="text-4xl py-4 px-3"
                 >
                   {category.label}
                   <Check

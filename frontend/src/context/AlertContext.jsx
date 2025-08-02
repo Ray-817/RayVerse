@@ -54,9 +54,9 @@ export const AlertProvider = ({ children }) => {
         >
           <Alert
             variant={alert.type}
-            className="text-6xl" // 字体大小保持与之前需求一致
+            className="text-7xl" // 字体大小保持与之前需求一致
           >
-            <AlertTitle className="flex justify-between items-center font-bold text-3xl mt-3 mx-5">
+            <AlertTitle className="flex justify-between items-center font-bold text-5xl my-5 mx-7 md:text-3xl md:my-3">
               {alert.title}
               <button
                 onClick={hideAlert}
@@ -66,7 +66,7 @@ export const AlertProvider = ({ children }) => {
                 <X className="h-8 w-8" />
               </button>
             </AlertTitle>
-            <AlertDescription className="text-3xl my-3 mx-5">
+            <AlertDescription className="text-4xl my-3 mx-5 md:text-2xl">
               {alert.description}
             </AlertDescription>
           </Alert>

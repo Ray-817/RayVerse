@@ -103,9 +103,9 @@ function FeedbackForm() {
   };
 
   return (
-    <Card className="w-[70vw] mx-auto h-[40vh] bg-background-dark shadow-none border-none sm:w-[30vw] sm:h-auto">
+    <Card className="w-[70vw] mx-auto h-[55vh] bg-background-dark shadow-none border-none sm:w-[30vw] sm:h-auto">
       <CardHeader className="py-3">
-        <CardTitle className="text-4xl leading-normal sm:text-3xl ">
+        <CardTitle className="text-5xl leading-normal sm:text-3xl ">
           {t("formDescription")}
         </CardTitle>
       </CardHeader>
@@ -121,7 +121,7 @@ function FeedbackForm() {
           <div className="grid w-full items-center gap-4 ">
             <div className="flex flex-col space-y-3">
               <Label
-                className="text-4xl leading-normal sm:text-2xl"
+                className="text-5xl leading-normal sm:text-2xl"
                 htmlFor="name"
               >
                 {t("name")}
@@ -135,7 +135,7 @@ function FeedbackForm() {
             </div>
             <div className="flex flex-col space-y-1.5">
               <Label
-                className="text-4xl leading-normal sm:text-2xl"
+                className="text-5xl leading-normal sm:text-2xl"
                 htmlFor="email"
               >
                 {t("mail")}
@@ -150,7 +150,7 @@ function FeedbackForm() {
             </div>
             <div className="flex flex-col space-y-1.5">
               <Label
-                className="text-4xl leading-normal sm:text-2xl"
+                className="text-5xl leading-normal sm:text-2xl"
                 htmlFor="feedback"
               >
                 {t("feedback")}
@@ -167,7 +167,7 @@ function FeedbackForm() {
             <Button
               type="submit"
               size="lg"
-              className="text-3xl rounded-full bg-logo "
+              className="text-4xl rounded-full bg-logo "
               disabled={isLoading}
             >
               {isLoading ? t("submiting") : t("submit")}

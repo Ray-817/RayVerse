@@ -1,4 +1,5 @@
 import { marked } from "marked";
+import "../../styles/markdown.css";
 
 export default function MarkdownRenderer({ markdown }) {
   const html = marked.parse(markdown, {
@@ -8,7 +9,7 @@ export default function MarkdownRenderer({ markdown }) {
 
   return (
     <div
-      className="markdown-body max-w-full prose prose-2xl"
+      className="markdown-body max-w-full"
       dangerouslySetInnerHTML={{ __html: html }}
     />
   );

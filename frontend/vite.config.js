@@ -1,8 +1,7 @@
-/* eslint-disable no-undef */
+// vite.config.js
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
-import typography from "@tailwindcss/typography"; // 导入插件
 import ssr from "vite-plugin-ssr/plugin";
 import { fileURLToPath } from "url";
 import path from "path";
@@ -14,7 +13,9 @@ export default defineConfig({
   plugins: [
     react(),
     tailwindcss({
-      plugins: [typography],
+      // 指向你的 Tailwind CSS 配置文件
+      // 这是关键的一步！
+      configFile: path.resolve(__dirname, "tailwind.config.mjs"),
     }),
     ssr({
       prerender: true,

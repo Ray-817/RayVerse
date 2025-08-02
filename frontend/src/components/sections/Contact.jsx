@@ -21,8 +21,8 @@ function Contact() {
         <FeedbackForm />
         <div className="flex flex-col font-semibold justify-between items-center">
           <div className="sm:mr-50">
-            <h3 className="text-5xl mb-8">{t("thank1")}</h3>
-            <h3 className="text-5xl">{t("thank2")}</h3>
+            <h3 className="text-6xl mb-8 md:text-5xl">{t("thank1")}</h3>
+            <h3 className="text-6xl  md:text-5xl">{t("thank2")}</h3>
           </div>
           <div className="mt-15 sm:mr-54">
             <ButtonMy
