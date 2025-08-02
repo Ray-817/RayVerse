@@ -1,13 +1,10 @@
 /* eslint-disable require-await */
-/* eslint-disable react/button-has-type */
 import { useEffect, useState, useCallback } from "react";
 import { useLocation } from "react-router-dom";
 import { getArticles, getSingleArticleBySlug } from "@services/articleService";
 import { useAlert } from "@hooks/useAlert";
 import config from "@config/appConfig";
 import clsx from "clsx";
-// import ReactMarkdown from "react-markdown"; // 导入 react-markdown
-// import remarkGfm from "remark-gfm"; // 导入 remark-gfm
 import { useTranslation } from "react-i18next";
 import { ModalPortal } from "@components/layout/ModalPortal";
 import MarkdownRenderer from "@components/ui/MarkdownRenderer";
@@ -27,25 +24,20 @@ function ArticleList() {
   const [articles, setArticles] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [loading, setLoading] = useState(true); // 用于文章列表的初始加载
-  const [error, setError] = useState(null); // 用于文章列表的错误
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [currentLang, setCurrentLang] = useState(config.DEFAULT_LANG);
   const { t } = useTranslation();
 
-  // 模态框相关状态
-  const [selectedArticle, setSelectedArticle] = useState(null); // 存储选中的文章详情（包含Markdown内容）
-  const [loadingArticleContent, setLoadingArticleContent] = useState(false); // 控制模态框内文章内容的加载状态
-  const [, setArticleContentError] = useState(null); // 控制模态框内文章内容的错误
+  const [selectedArticle, setSelectedArticle] = useState(null);
+  const [loadingArticleContent, setLoadingArticleContent] = useState(false);
+  const [, setArticleContentError] = useState(null);
   const [modalArticleSlug, setModalArticleSlug] = useState(null);
   const { showAlert } = useAlert();
 
   const iconClass = clsx("absolute inset-0 flex items-center justify-center");
-
   const location = useLocation();
-  // 移除 navigate 状态，因为它不再需要 handleCategoryChange
-  // const navigate = useNavigate();
 
-  // 从 URL 查询参数中获取当前的分类、语言和页码
   const getParamsFromUrl = useCallback(() => {
     const params = new URLSearchParams(location.search);
     const category = params.get("category") || "all";
@@ -54,7 +46,6 @@ function ArticleList() {
     return { category, lang, page };
   }, [location.search]);
 
-  // 异步获取文章数据的函数
   const fetchArticles = useCallback(
     async (page, category, lang) => {
       setLoading(true);
@@ -66,9 +57,7 @@ function ArticleList() {
           category: category,
           lang: lang,
         };
-
         const data = await getArticles(params);
-
         setCurrentPage(data.currentPage);
         setTotalPages(data.totalPages);
         setArticles(data.articles);
@@ -91,15 +80,9 @@ function ArticleList() {
   const fetchAndSetModalContent = useCallback(
     async (articleSlug, lang) => {
       if (!articleSlug || !lang) return;
-
-      setArticleContentError(null); // 仅保留错误状态的重置
-
+      setArticleContentError(null);
       try {
-        // 这一步现在会从后端直接获取完整的文章数据，包括 Markdown 内容
         const fullArticleData = await getSingleArticleBySlug(articleSlug, lang);
-
-        // 直接使用后端返回的 fullArticleData 中的 content 字段
-        // 假设后端现在返回的 fullArticleData 已经包含了 content 字段
         setSelectedArticle({
           ...fullArticleData,
           content: fullArticleData.content,
@@ -110,14 +93,14 @@ function ArticleList() {
         console.error("Error loading article content:", err);
         setArticleContentError(message);
         showAlert("destructive", title, message);
-        setSelectedArticle(null); // 如果获取失败，关闭模态框
-        setModalArticleSlug(null); // 重置 slug
+        setSelectedArticle(null);
+        setModalArticleSlug(null);
       } finally {
-        setLoadingArticleContent(false); // 无论成功失败，都停止加载
+        setLoadingArticleContent(false);
       }
     },
     [showAlert, t]
-  ); // 依赖项不变，因为它依赖的是 getSingleArticleBySlug 这个函数调用
+  );
 
   useEffect(() => {
     const {
@@ -125,68 +108,53 @@ function ArticleList() {
       lang: langFromUrl,
       page: pageFromUrl,
     } = getParamsFromUrl();
-
     fetchArticles(pageFromUrl, categoryFromUrl, langFromUrl);
-  }, [location.search, fetchArticles, getParamsFromUrl]); // 移除了 selectedArticle
+  }, [location.search, fetchArticles, getParamsFromUrl]);
 
-  // ** useEffect 钩子 2: 负责控制 body 滚动条 (只依赖 selectedArticle 变化) **
   useEffect(() => {
     if (selectedArticle) {
       document.body.style.overflow = "hidden";
-      // 优化：计算滚动条宽度并添加 padding-right，避免内容跳动
       const scrollbarWidth =
         window.innerWidth - document.documentElement.clientWidth;
       if (scrollbarWidth > 0) {
-        // 仅当有滚动条时才添加 padding
         document.body.style.paddingRight = `${scrollbarWidth}px`;
       }
     } else {
       document.body.style.overflow = "";
-      document.body.style.paddingRight = ""; // 清除 padding
+      document.body.style.paddingRight = "";
     }
-
-    // 清理函数
     return () => {
       document.body.style.overflow = "";
       document.body.style.paddingRight = "";
     };
-  }, [selectedArticle]); // 只依赖 selectedArticle
+  }, [selectedArticle]);
 
   useEffect(() => {
     if (modalArticleSlug && currentLang) {
-      // **在发起请求前，立即设置为加载状态**
       setLoadingArticleContent(true);
-      setArticleContentError(null); // 清除可能存在的旧错误信息
-
+      setArticleContentError(null);
       fetchAndSetModalContent(modalArticleSlug, currentLang);
     } else if (!modalArticleSlug) {
-      // 如果模态框已关闭，确保相关状态都重置
       setSelectedArticle(null);
       setArticleContentError(null);
       setLoadingArticleContent(false);
     }
   }, [modalArticleSlug, currentLang, fetchAndSetModalContent]);
 
-  const handleArticleClick = useCallback(
-    async (article) => {
-      setSelectedArticle({ ...article, content: "" });
-      setLoadingArticleContent(true);
-      setArticleContentError(null); // Make sure to reset error state
-
-      setModalArticleSlug(article.slug); // Set the slug here
-      // fetchAndSetModalContent will be triggered by the useEffect below
-    },
-    [] // No need for currentLang or fetchAndSetModalContent here as they are handled by useEffect
-  );
-  // 关闭模态框
-  const closeModal = useCallback(() => {
-    setModalArticleSlug(null); // Indicate no article is selected for the modal
-    setSelectedArticle(null); // Clear displayed article data
+  const handleArticleClick = useCallback(async (article) => {
+    setSelectedArticle({ ...article, content: "" });
+    setLoadingArticleContent(true);
     setArticleContentError(null);
-    setLoadingArticleContent(false); // Reset loading state
+    setModalArticleSlug(article.slug);
   }, []);
 
-  // 辅助函数：根据文章的分类获取对应的 Tailwind CSS 类名
+  const closeModal = useCallback(() => {
+    setModalArticleSlug(null);
+    setSelectedArticle(null);
+    setArticleContentError(null);
+    setLoadingArticleContent(false);
+  }, []);
+
   const getArticleCardClass = (articleCategories) => {
     if (
       !articleCategories ||
@@ -195,31 +163,24 @@ function ArticleList() {
     ) {
       return categoryColors.default;
     }
-
     const primaryCategory = articleCategories[0];
-
     return categoryColors[primaryCategory] || categoryColors.default;
   };
 
   const parentHeightClass = error
     ? "w-[80vw] h-[60vw] sm:w-[40vw] sm:h-[10vw]"
     : "min-h-[80vw] w-[70vw]";
-
   const articleListClasses = clsx(
     `relative ${parentHeightClass} mx-auto flex flex-col items-center justify-center rounded-lg overflow-hidden md:w-[45vw] md:min-h-[45vw]`
   );
-
   const parentMargin = error ? "my-20" : "my-40";
   const containerClasses = clsx(`container mx-auto ${parentMargin}`);
-
-  // 为错误信息容器定义独立的宽度
   const errorMessageContainerWidthClass = "w-[80vw] sm:w-[40vw]";
 
   return (
     <div className={containerClasses}>
       <div className={articleListClasses}>
         {loading ? (
-          // 加载时显示旋转图标，并使其填充整个预设大小的容器
           <div className={iconClass}>
             <Icon
               name="loader"
@@ -227,7 +188,6 @@ function ArticleList() {
             />
           </div>
         ) : error ? (
-          // 错误时显示错误信息
           <div
             className={`flex flex-col w-[100%] rounded-lg text-center ${errorMessageContainerWidthClass}`}
           >
@@ -275,8 +235,9 @@ function ArticleList() {
       <PaginationMy currentPage={currentPage} totalPages={totalPages} />
       <ModalPortal isOpen={!!selectedArticle} onClose={closeModal}>
         {selectedArticle && (
+          // 修改这个 div 的 className
           <div
-            className="relative rounded-lg max-w-4xl max-h-[75vh] w-[70vw] overflow-y-auto transform scale-95 animate-fade-in-scale sm:max-h-[85vh] sm:mt-20 "
+            className="relative w-full h-[70vh] md:w-auto md:h-auto md:max-w-3xl rounded-lg overflow-y-auto transform scale-95 animate-fade-in-scale"
             onClick={(e) => e.stopPropagation()}
           >
             {loadingArticleContent ? (
@@ -284,7 +245,7 @@ function ArticleList() {
                 <Icon name="loader" className="w-20 h-20 animate-spin" />
               </div>
             ) : (
-              <div className="relative bg-white prose prose-lg max-w-none">
+              <div className="relative bg-white max-w-none">
                 <div className="flex flex-col gap-3 border-b border-gray-200 ">
                   <h2 className="text-6xl font-bold mb-4 p-3 pt-15">
                     {selectedArticle.title}
@@ -301,6 +262,7 @@ function ArticleList() {
                     )}
                   </p>
                 </div>
+                {/* 修改内边距，让内容在小屏幕下不紧贴边缘 */}
                 <div className="flex flex-col mx-auto px-4 py-8 md:px-8 max-w-7xl">
                   <MarkdownRenderer markdown={selectedArticle.content} />
                 </div>
