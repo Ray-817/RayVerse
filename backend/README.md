@@ -28,6 +28,7 @@ backend/
 ├── utils/          # Utility functions
 ├── app.js          # Main Express app configuration (middleware, routes, etc.)
 └── server.js       # Entry point: starts the server and connects to the database
+````
 
 ## API Endpoints
 
@@ -41,8 +42,8 @@ Protected routes (`POST`, `PUT`, `DELETE`, etc.) will return `401` Unauthorized 
 - `GET /images/thumbnails` — Retrieve gallery image's thumbnails
 - `GET /images/slug/` — Fetch single image by slug
 - `POST /images` — Post mata data of a image
-- `GET /video` — Retrieve gallery videos
-- `POST /video` — Post mata data of a video
+- `GET /videos` — Retrieve gallery videos
+- `POST /videos` — Post mata data of a video
 
 ## Database Schema (Mongoose)
 
@@ -115,3 +116,4 @@ cd rayverse-backend
 npm install
 npm start
 ```
+
