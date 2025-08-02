@@ -10,8 +10,8 @@ const API_TOKEN = process.env.API_TOKEN;
  * @param {Function} next - The next middleware function.
  */
 const authorizeAdmin = (req, res, next) => {
-  // 1. Allow all GET requests to pass without authentication.
-  if (req.method === "GET") {
+  // 1. Allow all GET and OPTIONS requests to pass without authentication.
+  if (req.method === "GET" || req.method === "OPTIONS") {
     return next();
   }
 
