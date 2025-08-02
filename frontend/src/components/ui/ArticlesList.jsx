@@ -286,11 +286,11 @@ function ArticleList() {
             ) : (
               <div className="relative bg-white prose prose-lg max-w-none">
                 <div className="flex flex-col gap-3 border-b border-gray-200 ">
-                  <h2 className="text-5xl font-bold mb-4 p-3 pt-15">
+                  <h2 className="text-6xl font-bold mb-4 p-3 pt-15">
                     {selectedArticle.title}
                   </h2>
                   <p className="mb-6 py-3 px-8">{selectedArticle.summary}</p>
-                  <p className="text-2xl text-right text-gray-400 pb-2 pr-4">
+                  <p className="text-3xl text-right text-gray-400 pb-2 pr-4">
                     {new Date(selectedArticle.publishedAt).toLocaleDateString(
                       currentLang,
                       {

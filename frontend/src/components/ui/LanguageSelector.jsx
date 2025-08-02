@@ -91,7 +91,7 @@ function LanguageSelector() {
           variant="outline"
           className="text-6xl md:text-3xl px-4 py-8 bg-background-light border-0"
         >
-          <Icon name="globe" className="size-12 fill-logo" />
+          <Icon name="globe" className="size-24 fill-logo" />
           {currentLangName}
         </Button>
       </DropdownMenuTrigger>
@@ -102,7 +102,7 @@ function LanguageSelector() {
             key={language.code}
             onSelect={() => changeLanguage(language.code)}
             className={`
-              text-4xl md:text-3xl mx-2 my-3
+              text-6xl md:text-3xl mx-2 my-3
               ${
                 language.code === currentSelectedLang
                   ? "font-semibold text-text-my"
