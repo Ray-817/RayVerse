@@ -3,10 +3,14 @@ import React, { useEffect, useRef, useState } from "react";
 import ReactDOM from "react-dom";
 import Icon from "@components/ui/Icon";
 
-const ModalPortal = ({ children, isOpen, onClose }) => {
-  // modalRootRef 用于引用 #modal-root DOM 元素
+const ModalPortal = ({
+  children,
+  isOpen,
+  onClose,
+  isLoading,
+  type = "default",
+}) => {
   const modalRootRef = useRef(null);
-  // elRef 用于引用每个 ModalPortal 实例创建的 div 元素，这是实际渲染内容的容器
   const elRef = useRef(null);
   const [mounted, setMounted] = useState(false);
 
@@ -15,7 +19,6 @@ const ModalPortal = ({ children, isOpen, onClose }) => {
       if (!elRef.current) {
         elRef.current = document.createElement("div");
       }
-
       let currentModalRoot = document.getElementById("modal-root");
       if (!currentModalRoot) {
         currentModalRoot = document.createElement("div");
@@ -23,11 +26,9 @@ const ModalPortal = ({ children, isOpen, onClose }) => {
         document.body.appendChild(currentModalRoot);
       }
       modalRootRef.current = currentModalRoot;
-
       modalRootRef.current.appendChild(elRef.current);
       setMounted(true);
     }
-
     return () => {
       if (
         typeof window !== "undefined" &&
@@ -44,35 +45,44 @@ const ModalPortal = ({ children, isOpen, onClose }) => {
     return null;
   }
 
+  // 动态设置容器样式
+  const isImageOrLoading = type === "image" || isLoading;
+  const containerClass = `relative w-auto h-auto flex flex-col items-center justify-center ${
+    isImageOrLoading
+      ? "bg-transparent"
+      : "bg-white rounded-xl w-[80%] max-h-[70%]"
+  }`;
+
+  // 动态设置关闭按钮样式
+  const closeButtonClass = `absolute top-[12vh] right-4 p-2 rounded-full bg-white hover:bg-gray-100 transition-colors duration-200 md:top-[13vh] ${
+    isImageOrLoading ? "hidden" : "bg-white hover:bg-gray-100"
+  } transition-colors duration-200 z-50`;
+
   return ReactDOM.createPortal(
     <div
-      className="fixed bg-gray-200/50 inset-0 flex items-center justify-center z-30 p-4"
+      className="fixed inset-0 flex items-center justify-center z-30 p-4 bg-gray-200/50"
       onClick={onClose}
-      style={{ zIndex: 30 }}
     >
       <div
-        // 关键修改：模态框主体容器的尺寸和样式
-        // 默认情况下（移动端），宽度为全宽，高度为屏幕高度的 70%
-        // 在中等屏幕（md）及以上，宽度和高度都恢复为自适应，并设置最大宽度为 3xl
-        // 添加 bg-white 和 rounded-xl 以确保内容有背景和圆角
-        className="relative w-full h-[70vh] bg-white rounded-xl md:w-auto md:h-auto md:max-w-3xl"
+        className={containerClass}
         onClick={(e) => e.stopPropagation()}
+        style={{ marginTop: isImageOrLoading ? "0" : "10vh" }}
       >
-        {children}
+        {isLoading ? (
+          <Icon
+            name="loader"
+            className="w-40 h-40 animate-spin text-gray-500"
+          />
+        ) : (
+          children
+        )}
       </div>
       <button
         onClick={onClose}
-        // 关键修改：调整关闭按钮的定位
-        // 在移动端，按钮定位在右上角
-        // 在中等屏幕（md）及以上，按钮定位在模态框的右上角
-        className="absolute top-4 right-4 md:top-8 md:right-8 p-2 rounded-full bg-white hover:bg-gray-100 transition-colors duration-200"
-        aria-label="Close"
+        className={closeButtonClass}
+        aria-label="Close modal"
       >
-        {/*
-          根据你的需求调整图标大小
-          例如：className="w-8 h-8 text-gray-500"
-        */}
-        <Icon name="close" className="w-8 h-8 text-gray-500" />
+        <Icon name="close" className="w-20 h-20 md:w-15 md:h-15" />
       </button>
     </div>,
     elRef.current

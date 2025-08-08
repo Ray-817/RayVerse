@@ -4,7 +4,6 @@
  */
 const mongoose = require("mongoose");
 const slugify = require("slugify");
-const validator = require("validator");
 
 /**
  * @description Defines the Mongoose schema for an Article.
@@ -59,20 +58,16 @@ const articleSchema = new mongoose.Schema(
         type: String,
         required: [true, "Article should has URL."],
         trim: true,
-        // Validate that the provided string is a valid URL format.
-        validate: [validator.isURL, "Content URL must be a valid URL."],
       },
       jp: {
         type: String,
         required: [true, "Article should has URL."],
         trim: true,
-        validate: [validator.isURL, "Content URL must be a valid URL."],
       },
       zhHans: {
         type: String,
         required: [true, "Article should has URL."],
         trim: true,
-        validate: [validator.isURL, "Content URL must be a valid URL."],
       },
     },
     // The timestamp when the article was published.

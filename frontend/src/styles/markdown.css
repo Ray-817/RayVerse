@@ -17,15 +17,15 @@
   margin-bottom: 0.75em;
 }
 .markdown-body h1 {
-  font-size: 4.25rem;
+  font-size: 3.25rem;
   line-height: 1.2;
 }
 .markdown-body h2 {
-  font-size: 3.875rem;
+  font-size: 2.875rem;
   line-height: 1.25;
 }
 .markdown-body h3 {
-  font-size: 3.5rem;
+  font-size: 2.5rem;
   line-height: 1.25;
 }
 
@@ -33,7 +33,7 @@
 .markdown-body p,
 .markdown-body ul,
 .markdown-body ol {
-  font-size: 3rem;
+  font-size: 2rem;
   margin-top: 1.5em;
   margin-bottom: 1.5em;
 }
@@ -41,6 +41,7 @@
 /* 代码块样式 */
 .markdown-body code {
   /* 行内代码 */
+  font-size: 2rem;
   background-color: #f3f4f6;
   border-radius: 0.25rem;
   padding: 0.2em 0.4em;
@@ -56,7 +57,7 @@
 }
 
 .markdown-body pre code {
-  font-size: 4.25rem; /* 增大代码块字体 */
+  font-size: 3rem; /* 增大代码块字体 */
   background-color: transparent;
   padding: 0;
 }
@@ -64,10 +65,10 @@
 /* 针对手机等小屏幕的响应式调整 */
 @media (max-width: 768px) {
   .markdown-body {
-    font-size: 3.25rem;
+    font-size: 3rem;
   }
   .markdown-body code {
-    font-size: 3rem;
+    font-size: 2.85rem;
   }
   .markdown-body h1 {
     font-size: 6rem;

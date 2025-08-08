@@ -11,24 +11,20 @@ import { ModalPortal } from "@components/layout/ModalPortal";
 
 function ImageList() {
   const [images, setImages] = useState([]);
-  // const [selectedImage, setSelectedImage] = useState(null); // 移除这里直接控制modal的state
   const [loading, setLoading] = useState(true);
-  // const [loadingLargeImage, setLoadingLargeImage] = useState(false); // 模态框内部的加载状态
-  // const [error, setError] = useState(null); // 用于整体列表错误处理
   const { showAlert } = useAlert();
   const { t } = useTranslation();
 
-  // ***** 模态框相关状态 *****
-  const [selectedImage, setSelectedImage] = useState(null); // 存储模态框内要显示的图片数据 (初始为缩略图，成功后为完整图)
-  const [loadingLargeImage, setLoadingLargeImage] = useState(false); // 控制模态框内部的加载状态
-  const [largeImageError, setLargeImageError] = useState(null); // 模态框内部的图片加载错误 (虽然最终会关闭modal)
-  const [modalImageSlug, setModalImageSlug] = useState(null); // 控制模态框内容异步加载的触发器
-  const [initialFetchError, setInitialFetchError] = useState(null); // 用于初始缩略图列表的错误
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [loadingLargeImage, setLoadingLargeImage] = useState(false);
+  const [largeImageError, setLargeImageError] = useState(null);
+  const [modalImageSlug, setModalImageSlug] = useState(null);
+  const [initialFetchError, setInitialFetchError] = useState(null);
 
   useEffect(() => {
     const fetchAllThumbnails = async () => {
       setLoading(true);
-      setInitialFetchError(null); // 重置初始加载错误
+      setInitialFetchError(null);
       try {
         const data = await imageServices.getAllThumbnails();
         setImages(data);
@@ -36,20 +32,17 @@ function ImageList() {
         const title = t("failFetchImages");
         const message = t("checkNetworkMessage");
         console.error("Error fetching thumbnails:", err);
-        setInitialFetchError(t("failFetchImages")); // 设置初始加载错误信息
+        setInitialFetchError(t("failFetchImages"));
         showAlert("destructive", title, message);
       } finally {
         setLoading(false);
       }
     };
-
     fetchAllThumbnails();
-  }, [showAlert, t]); // 依赖项中添加 showAlert 和 t
+  }, [showAlert, t]);
 
-  // ***** 模态框相关：控制 body 滚动条和 padding *****
   useEffect(() => {
     if (selectedImage) {
-      // 只要 selectedImage 有值 (模态框打开)
       document.body.style.overflow = "hidden";
       const scrollbarWidth =
         window.innerWidth - document.documentElement.clientWidth;
@@ -57,60 +50,47 @@ function ImageList() {
         document.body.style.paddingRight = `${scrollbarWidth}px`;
       }
     } else {
-      // selectedImage 为 null (模态框关闭)
       document.body.style.overflow = "";
       document.body.style.paddingRight = "";
     }
-
     return () => {
       document.body.style.overflow = "";
       document.body.style.paddingRight = "";
     };
   }, [selectedImage]);
 
-  // ***** 新增 useEffect 钩子：负责根据 modalImageSlug 加载大图内容 *****
   const fetchAndSetModalImage = useCallback(
     async (slug) => {
       if (!slug) return;
-
-      setLoadingLargeImage(true); // 立即设置为加载状态，在模态框内部显示加载器
-      setLargeImageError(null); // 清除旧的错误信息
-
+      setLoadingLargeImage(true);
+      setLargeImageError(null);
       try {
-        // 1. 调用 services 获取大图详情（包含 imageUrl）
         const fullImageData = await imageServices.getSingleImageBySlug(slug);
-
-        // 2. 创建 Image 对象来预加载图片，检查图片文件是否能加载
         const img = new Image();
         img.src = fullImageData.imageUrl;
-
-        // 3. 监听 Image 对象的加载成功事件
         img.onload = () => {
-          setSelectedImage(fullImageData); // 图片文件加载成功，更新为完整图片数据
-          setLoadingLargeImage(false); // 停止加载
+          setSelectedImage(fullImageData);
+          setLoadingLargeImage(false);
         };
-
-        // 4. 监听 Image 对象的加载失败事件
         img.onerror = () => {
           console.error("Error loading full image:", fullImageData.imageUrl);
-          setLargeImageError(t("failLoadFullImage")); // 设置错误状态（虽然最终会关闭）
+          setLargeImageError(t("failLoadFullImage"));
           showAlert(
             "destructive",
             t("failLoadFullImage"),
             t("imageLoadErrorMessage")
-          ); // 弹出提示
-          setLoadingLargeImage(false); // 停止加载
-          setModalImageSlug(null); // 关闭模态框（通过清空 slug）
-          setSelectedImage(null); // 清空 selectedImage，确保模态框关闭
+          );
+          setLoadingLargeImage(false);
+          setModalImageSlug(null);
+          setSelectedImage(null);
         };
       } catch (err) {
-        // 5. 如果 imageServices.getSingleImageBySlug API 调用本身失败
         console.error("Error fetching large image details via API:", err);
-        setLargeImageError(t("failGetImages")); // 设置错误状态（虽然最终会关闭）
-        showAlert("destructive", t("failLoadImage"), t("checkNetworkMessage")); // 弹出提示
-        setLoadingLargeImage(false); // 停止加载
-        setModalImageSlug(null); // 关闭模态框
-        setSelectedImage(null); // 清空 selectedImage，确保模态框关闭
+        setLargeImageError(t("failGetImages"));
+        showAlert("destructive", t("failLoadImage"), t("checkNetworkMessage"));
+        setLoadingLargeImage(false);
+        setModalImageSlug(null);
+        setSelectedImage(null);
       }
     },
     [showAlert, t]
@@ -120,24 +100,17 @@ function ImageList() {
     if (modalImageSlug) {
       fetchAndSetModalImage(modalImageSlug);
     } else {
-      // 如果 modalImageSlug 为 null (模态框被关闭)，重置相关状态
       setSelectedImage(null);
       setLoadingLargeImage(false);
       setLargeImageError(null);
     }
   }, [modalImageSlug, fetchAndSetModalImage]);
 
-  // ***** handleImageClick 现在只负责设置 modalImageSlug *****
   const handleImageClick = useCallback((image) => {
-    // 1. 立即设置 selectedImage 为点击的缩略图数据
-    // 这会立即打开模态框，并显示缩略图作为占位符（如果你的 image 对象包含 thumbnailUrl）
     setSelectedImage(image);
-    // 2. 设置 modalImageSlug 来触发 useEffect 异步加载大图
     setModalImageSlug(image.slug);
-    // loadingLargeImage 会在 fetchAndSetModalImage 中被设置为 true
   }, []);
 
-  // 关闭模态框
   const closeModal = useCallback(() => {
     setModalImageSlug(null);
   }, []);
@@ -146,14 +119,11 @@ function ImageList() {
   const imageGridClasses = clsx(
     `grid ${imageGalleryWidthClass} gap-10 grid-cols-2 md:grid-cols-3 lg:grid-cols-4`
   );
-
-  const parentMargin = initialFetchError ? "my-20" : "my-40"; // 使用 initialFetchError
+  const parentMargin = initialFetchError ? "my-20" : "my-40";
   const containerClasses = clsx(`mx-auto ${parentMargin}`);
-
   const loadingContainerClasses = clsx(
     "w-[50vw] h-[30vw] mt-30 flex items-center justify-center mx-auto"
   );
-
   const errorMessageContainerWidthClass = "w-[80vw] sm:w-[40vw]";
 
   return (
@@ -206,26 +176,18 @@ function ImageList() {
           ))}
         </div>
       )}
-
-      {/* 模态框渲染条件：只有当 selectedImage 有值时才渲染 */}
-      <ModalPortal isOpen={!!selectedImage} onClose={closeModal}>
-        {selectedImage && ( // 只要 selectedImage 有值，模态框就会被渲染
-          <div className="imgContainer" onClick={(e) => e.stopPropagation()}>
-            {loadingLargeImage ? (
-              // 如果正在加载大图，显示加载动画
-              <div className="w-[80vw] h-[30vh] flex items-center justify-center text-xl sm:w-[50vw] sm:h-[70vh]">
-                <Icon name="loader" className="w-40 h-40 animate-spin" />
-              </div>
-            ) : (
-              // 加载结束后，显示图片。如果加载失败，selectedImage 会被设为 null，模态框会关闭
-              // 所以这里不需要再处理 error 状态
-              <img
-                src={selectedImage.imageUrl || selectedImage.thumbnailUrl} // 优先使用 imageUrl (完整图)，如果还没有则用 thumbnailUrl (点击时传进来的缩略图)
-                alt={selectedImage.description || selectedImage.title}
-                className="max-w-[90vw] max-h-[85vh] object-contain mx-auto block pt-20 z-60"
-              />
-            )}
-          </div>
+      <ModalPortal
+        isOpen={!!selectedImage}
+        onClose={closeModal}
+        isLoading={loadingLargeImage}
+        type="image"
+      >
+        {selectedImage && !loadingLargeImage && (
+          <img
+            src={selectedImage.imageUrl || selectedImage.thumbnailUrl}
+            alt={selectedImage.description || selectedImage.title}
+            className="max-w-[90vw] max-h-[85vh] object-contain mx-auto block z-60"
+          />
         )}
       </ModalPortal>
     </div>

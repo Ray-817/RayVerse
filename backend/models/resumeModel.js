@@ -3,7 +3,6 @@
  * @description This schema stores the R2 object key and language for each resume version.
  */
 const mongoose = require("mongoose");
-const validator = require("validator");
 
 /**
  * @description Defines the Mongoose schema for a Resume.
@@ -14,8 +13,6 @@ const resumeSchema = new mongoose.Schema(
     resumeUrl: {
       type: String,
       required: [true, "Resume must have a URL."],
-      // Validate that the provided string is a valid URL format.
-      validate: [validator.isURL, "Resume URL must be a valid URL."],
     },
     // The language of the resume, ensuring it's one of the allowed values and unique.
     language: {

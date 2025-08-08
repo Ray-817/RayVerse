@@ -4,7 +4,6 @@
  */
 const mongoose = require("mongoose");
 const slugify = require("slugify");
-const validator = require("validator");
 
 /**
  * @description Defines the Mongoose schema for a Video.
@@ -32,13 +31,11 @@ const videoSchema = new mongoose.Schema(
     videoUrl: {
       type: String,
       required: [true, "Video must have a URL."],
-      validate: [validator.isURL, "Video URL must be a valid URL."],
     },
     // The R2 object key for the video's cover image. Validated as a URL.
     coverUrl: {
       type: String,
       required: [true, "Video must have a cover URL."],
-      validate: [validator.isURL, "Cover URL must be a valid URL."],
     },
     // The number of likes the video has received.
     likes: {

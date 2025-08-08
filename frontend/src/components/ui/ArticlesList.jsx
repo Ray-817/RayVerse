@@ -221,10 +221,10 @@ function ArticleList() {
                 onClick={() => handleArticleClick(article)}
                 title={article.title[currentLang]}
               >
-                <h3 className="line-clamp-1 text-4xl leading-relaxed font-semibold mb-2 text-left md:line-clamp-2">
+                <h3 className="line-clamp-1 text-5xl leading-relaxed font-semibold mb-2 text-left md:line-clamp-2 md:text-4xl">
                   {article.title ? article.title[currentLang] : ""}
                 </h3>
-                <p className="line-clamp-1 mt-auto leading-relaxed text-xl text-right md:line-clamp-2 ">
+                <p className="line-clamp-1 mt-auto leading-relaxed text-3xl text-right md:line-clamp-2 md:text-xl">
                   {article.summary ? article.summary[currentLang] : ""}
                 </p>
               </div>
@@ -233,41 +233,39 @@ function ArticleList() {
         )}
       </div>
       <PaginationMy currentPage={currentPage} totalPages={totalPages} />
-      <ModalPortal isOpen={!!selectedArticle} onClose={closeModal}>
-        {selectedArticle && (
-          // 修改这个 div 的 className
+      <ModalPortal
+        isOpen={!!selectedArticle}
+        onClose={closeModal}
+        isLoading={loadingArticleContent}
+      >
+        {!loadingArticleContent && selectedArticle && (
           <div
-            className="relative w-full h-[70vh] md:w-auto md:h-auto md:max-w-3xl rounded-lg overflow-y-auto transform scale-95 animate-fade-in-scale"
+            className="relative w-full h-full overflow-y-auto transform animate-fade-in-scale"
             onClick={(e) => e.stopPropagation()}
           >
-            {loadingArticleContent ? (
-              <div className="w-auto h-[30vh] flex items-center justify-center text-xl sm:h-[70vh]">
-                <Icon name="loader" className="w-20 h-20 animate-spin" />
+            <div className="relative bg-white">
+              <div className="border-b border-gray-200 p-6 pt-25">
+                <h2 className="text-6xl font-bold mb-4 md:text-6xl">
+                  {selectedArticle.title}
+                </h2>
+                <p className="text-5xl mb-6 mt-20 leading-normal md:text-4xl">
+                  {selectedArticle.summary}
+                </p>
+                <p className="text-3xl text-right text-gray-400 ">
+                  {new Date(selectedArticle.publishedAt).toLocaleDateString(
+                    currentLang,
+                    {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                    }
+                  )}
+                </p>
               </div>
-            ) : (
-              <div className="relative bg-white max-w-none">
-                <div className="flex flex-col gap-3 border-b border-gray-200 ">
-                  <h2 className="text-6xl font-bold mb-4 p-3 pt-15">
-                    {selectedArticle.title}
-                  </h2>
-                  <p className="mb-6 py-3 px-8">{selectedArticle.summary}</p>
-                  <p className="text-3xl text-right text-gray-400 pb-2 pr-4">
-                    {new Date(selectedArticle.publishedAt).toLocaleDateString(
-                      currentLang,
-                      {
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                      }
-                    )}
-                  </p>
-                </div>
-                {/* 修改内边距，让内容在小屏幕下不紧贴边缘 */}
-                <div className="flex flex-col mx-auto px-4 py-8 md:px-8 max-w-7xl">
-                  <MarkdownRenderer markdown={selectedArticle.content} />
-                </div>
+              <div className="p-6">
+                <MarkdownRenderer markdown={selectedArticle.content} />
               </div>
-            )}
+            </div>
           </div>
         )}
       </ModalPortal>

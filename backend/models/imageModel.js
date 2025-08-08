@@ -4,7 +4,6 @@
  */
 const mongoose = require("mongoose");
 const slugify = require("slugify");
-const validator = require("validator");
 
 /**
  * @description Defines the Mongoose schema for an Image.
@@ -26,14 +25,11 @@ const imageSchema = new mongoose.Schema(
     imageUrl: {
       type: String,
       required: [true, "Image should have a URL."],
-      // Validate that the provided string is a valid URL format.
-      validate: [validator.isURL, "Image URL must be a valid URL."],
     },
     // The R2 object key for the thumbnail image file.
     thumbnailUrl: {
       type: String,
       required: [true, "Image should have a thumbnail URL."],
-      validate: [validator.isURL, "Thumbnail URL must be a valid URL."],
     },
     // The category of the image, with a predefined set of values.
     category: {
